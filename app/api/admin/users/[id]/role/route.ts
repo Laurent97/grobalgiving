@@ -1,0 +1,41 @@
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/supabase/admin'
+import type { UserRole } from '@/lib/permissions'
+
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin()
+
+    const { id } = await params
+    const { role } = await req.json()
+
+    if (!id || !role) {
+      return NextResponse.json({ error: 'Missing user id or role' }, { status: 400 })
+    }
+
+    const validRoles: UserRole[] = ['admin', 'nonprofit_admin', 'donor']
+    if (!validRoles.includes(role)) {
+      return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
+    }
+
+    const supabase = await createClient()
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .update({ role })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ profile })
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message || 'Server error' }, { status: 500 })
+  }
+}
