@@ -101,3 +101,46 @@ BEGIN
       USING (bucket_id = 'project-images');
   END IF;
 END$$;
+
+-- ============================================
+-- PROJECT DOCUMENTS BUCKET
+-- ============================================
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'project-documents',
+  'project-documents',
+  true,
+  10485760, -- 10MB
+  ARRAY['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'image/webp']
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Allow authenticated users to upload project documents
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policy
+    WHERE polname = 'Authenticated users can upload project documents'
+    AND polrelid = 'storage.objects'::regclass
+  ) THEN
+    CREATE POLICY "Authenticated users can upload project documents"
+      ON storage.objects FOR INSERT
+      TO authenticated
+      WITH CHECK (bucket_id = 'project-documents');
+  END IF;
+END$$;
+
+-- Allow public read of project documents
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policy
+    WHERE polname = 'Public can view project documents'
+    AND polrelid = 'storage.objects'::regclass
+  ) THEN
+    CREATE POLICY "Public can view project documents"
+      ON storage.objects FOR SELECT
+      TO public
+      USING (bucket_id = 'project-documents');
+  END IF;
+END$$;

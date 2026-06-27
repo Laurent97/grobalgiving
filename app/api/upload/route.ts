@@ -27,10 +27,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Only JPG, PNG, WebP, and PDF files are allowed' }, { status: 400 })
     }
 
-    // Validate file size (5MB)
-    const maxSize = 5 * 1024 * 1024
+    // Validate file size — 10MB for project buckets, 5MB for receipts
+    const maxSize = (bucket === 'project-images' || bucket === 'project-documents')
+      ? 10 * 1024 * 1024
+      : 5 * 1024 * 1024
+    const maxSizeLabel = maxSize === 10 * 1024 * 1024 ? '10MB' : '5MB'
     if (file.size > maxSize) {
-      return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 })
+      return NextResponse.json({ error: `File size must be less than ${maxSizeLabel}` }, { status: 400 })
     }
 
     // Generate unique file name
