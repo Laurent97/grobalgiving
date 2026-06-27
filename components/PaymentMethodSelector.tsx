@@ -52,7 +52,7 @@ export default function PaymentMethodSelector({ onSelect, selectedMethod }: Paym
   }, [showToast])
 
   useEffect(() => {
-    if (selectedMethod && selectedType && selectedId) {
+    if (selectedType && selectedId) {
       const details = getSelectedMethodDetails()
       if (details) {
         onSelect({
