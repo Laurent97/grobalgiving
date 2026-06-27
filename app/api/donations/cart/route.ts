@@ -82,6 +82,14 @@ export async function POST(req: Request) {
       finalSessionId = crypto.randomUUID()
     }
 
+    // Ensure profile exists for authenticated user (prevents FK violation on donation_cart)
+    if (user) {
+      await supabase.from('profiles').upsert(
+        { id: user.id, full_name: user.user_metadata?.full_name || null },
+        { onConflict: 'id', ignoreDuplicates: true }
+      )
+    }
+
     // Add to cart
     const { data: item, error } = await supabase
       .from('donation_cart')
