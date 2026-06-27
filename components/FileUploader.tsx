@@ -45,7 +45,8 @@ export default function FileUploader({
     try {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('path', 'payment-receipts')
+      formData.append('bucket', 'payment-receipts')
+      formData.append('path', 'receipts')
 
       const response = await fetch('/api/upload', {
         method: 'POST',
