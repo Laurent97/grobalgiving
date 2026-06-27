@@ -91,7 +91,7 @@ export default function ProjectCardEnhanced({ project, onFavorite, showDonateBut
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user && frequency === 'monthly') {
+    if (!user) {
       router.push('/login?andthen=' + encodeURIComponent(window.location.pathname))
       return
     }

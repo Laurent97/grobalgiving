@@ -1,17 +1,19 @@
 'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export const dynamic = 'force-dynamic'
 
-export default function SignupPage() {
+function SignupPageContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const andthen = searchParams.get('andthen') || ''
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,7 +49,8 @@ export default function SignupPage() {
           console.log('Signup: session not available, skipping profile insert')
         }
       }
-      router.push('/login')
+      const loginUrl = andthen ? `/login?andthen=${encodeURIComponent(andthen)}` : '/login'
+      router.push(loginUrl)
     }
   }
 
@@ -107,10 +110,18 @@ export default function SignupPage() {
       </form>
       <p className="mt-4 text-center text-sm text-gray-600">
         Already have an account?{' '}
-        <a href="/login" className="text-gg-primary hover:underline">
+        <a href={andthen ? `/login?andthen=${encodeURIComponent(andthen)}` : '/login'} className="text-gg-primary hover:underline">
           Login
         </a>
       </p>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto max-w-md px-4 py-16"><p>Loading...</p></div>}>
+      <SignupPageContent />
+    </Suspense>
   )
 }

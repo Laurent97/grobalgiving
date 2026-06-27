@@ -75,10 +75,16 @@ export default function ProjectPage() {
   const percentage = Math.min((project.current_amount / project.goal_amount) * 100, 100)
   const remaining = project.goal_amount - project.current_amount
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const finalAmount = customAmount ? parseInt(customAmount) : donationAmount
     if (finalAmount < 1) {
       alert('Please enter a valid amount')
+      return
+    }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      router.push('/login?andthen=' + encodeURIComponent(window.location.pathname))
       return
     }
 

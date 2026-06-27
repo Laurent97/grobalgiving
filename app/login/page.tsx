@@ -12,7 +12,7 @@ function LoginPageContent() {
   const [error, setError] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const andthen = searchParams.get('andthen') || '/admin'
+  const andthen = searchParams.get('andthen') || '/'
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -87,7 +87,7 @@ function LoginPageContent() {
       </form>
       <p className="mt-4 text-center text-sm text-gray-600">
         Don't have an account?{' '}
-        <a href="/signup" className="text-gg-primary hover:underline">
+        <a href={andthen ? `/signup?andthen=${encodeURIComponent(andthen)}` : '/signup'} className="text-gg-primary hover:underline">
           Sign up
         </a>
       </p>

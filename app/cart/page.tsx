@@ -4,6 +4,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,13 @@ export default function CartPage() {
   const router = useRouter()
 
   const handleCheckout = async () => {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      router.push('/login?andthen=' + encodeURIComponent('/cart'))
+      return
+    }
+
     setLoading(true)
     try {
       // Sync local cart items to the server-side donation cart
