@@ -8,6 +8,7 @@ import ImpactStats from '@/components/ImpactStats'
 import HowItWorks from '@/components/HowItWorks'
 import Testimonials from '@/components/Testimonials'
 import SearchFilterClient from '@/components/SearchFilterClient'
+import Newsletter from '@/components/Newsletter'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -190,6 +191,9 @@ export default async function Home({
 
       {/* Testimonials */}
       <Testimonials />
+
+      {/* Newsletter */}
+      <Newsletter />
     </main>
   )
 }

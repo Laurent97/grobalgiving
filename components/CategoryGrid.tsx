@@ -101,18 +101,22 @@ export default function CategoryGrid() {
   }
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-20 bg-[#f8f9fa]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Explore by Cause
+          <div className="inline-flex items-center gap-2 bg-white border border-gray-200 text-[#3E4B59] text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-widest uppercase shadow-sm">
+            Browse by Cause
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#3E4B59] mb-3" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+            Find Your Cause
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find projects that match your passion. Every cause matters.
+          <p className="text-lg text-gray-500 max-w-xl mx-auto">
+            Every cause matters. Pick the issue closest to your heart.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Scrollable on mobile, grid on desktop */}
+        <div className="flex gap-4 overflow-x-auto pb-4 sm:pb-0 sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           {categories.map((category) => {
             const Icon = categoryIcons[category.slug] || Sparkles
             const color = categoryColors[category.slug] || 'bg-gray-500'
@@ -120,13 +124,13 @@ export default function CategoryGrid() {
               <button
                 key={category.id}
                 onClick={() => handleCategoryClick(category.slug)}
-                className="group relative bg-gray-50 hover:bg-white rounded-2xl p-6 text-center transition-all duration-200 hover:shadow-lg border border-gray-200 hover:border-gg-primary"
+                className="group flex-shrink-0 sm:flex-shrink bg-white hover:bg-white rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-xl border border-gray-100 hover:border-[#F08B1D]/30 hover:-translate-y-1 w-36 sm:w-auto"
               >
-                <div className={`mx-auto w-16 h-16 ${color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-8 h-8 text-white" />
+                <div className={`mx-auto w-14 h-14 ${color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
-                <p className="text-sm text-gray-500">{category.count} projects</p>
+                <h3 className="font-semibold text-[#3E4B59] text-sm mb-1">{category.name}</h3>
+                <p className="text-xs text-gray-400">{category.count} projects</p>
               </button>
             )
           })}

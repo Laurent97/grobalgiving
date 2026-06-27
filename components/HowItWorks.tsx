@@ -1,74 +1,99 @@
 'use client'
 
-import { Search, Heart, ArrowRight, CheckCircle } from 'lucide-react'
+import { Search, Heart, BarChart2, Share2 } from 'lucide-react'
+import Link from 'next/link'
 
 const steps = [
   {
+    number: '01',
     icon: Search,
-    title: 'Discover Projects',
-    description: 'Browse thousands of vetted projects across causes and regions that match your passion.',
+    title: 'Find a Cause',
+    description: 'Browse hundreds of vetted projects across causes and regions. Filter by category, location, or urgency to find what moves you.',
+    color: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    accent: 'border-blue-200',
   },
   {
+    number: '02',
     icon: Heart,
-    title: 'Make a Donation',
-    description: 'Give once or set up monthly recurring donations to create lasting impact.',
+    title: 'Donate Securely',
+    description: 'Give once or set up recurring monthly donations via bank transfer, mobile money, or crypto. Every transaction is encrypted.',
+    color: 'bg-orange-50',
+    iconColor: 'text-[#F08B1D]',
+    accent: 'border-orange-200',
   },
   {
-    icon: CheckCircle,
+    number: '03',
+    icon: BarChart2,
     title: 'Track Your Impact',
-    description: 'Receive regular updates and see exactly how your donation is making a difference.',
+    description: 'Receive regular updates from the field. See photos, reports, and milestones showing exactly how your gift is being used.',
+    color: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    accent: 'border-emerald-200',
+  },
+  {
+    number: '04',
+    icon: Share2,
+    title: 'Inspire Others',
+    description: 'Share your giving story. When your friends donate through your link, your collective impact multiplies — and so does theirs.',
+    color: 'bg-purple-50',
+    iconColor: 'text-purple-600',
+    accent: 'border-purple-200',
   },
 ]
 
 export default function HowItWorks() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-24 bg-[#f8f9fa]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="inline-flex items-center gap-2 bg-white border border-gray-200 text-[#3E4B59] text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-widest uppercase shadow-sm">
+            Simple Process
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#3E4B59] mb-4" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
             How It Works
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Making a difference is simple. Start changing lives in three easy steps.
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            Making a difference takes less than two minutes. Here's how GlobalGiving works.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+          {/* Connector line — desktop only */}
+          <div className="hidden lg:block absolute top-[3.5rem] left-[12.5%] right-[12.5%] h-px border-t-2 border-dashed border-gray-300 z-0" />
+
           {steps.map((step, index) => {
             const Icon = step.icon
             return (
-              <div key={index} className="relative">
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-8 h-full border border-orange-100 hover:shadow-lg transition-shadow">
+              <div key={index} className="relative z-10 group">
+                <div className={`bg-white rounded-2xl p-7 h-full border ${step.accent} border-opacity-60 hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}>
+                  {/* Step number + icon */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gg-primary rounded-xl">
-                      <Icon className="w-7 h-7 text-white" />
+                    <div className={`inline-flex items-center justify-center w-14 h-14 ${step.color} rounded-2xl group-hover:scale-110 transition-transform`}>
+                      <Icon className={`w-7 h-7 ${step.iconColor}`} />
                     </div>
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-gg-primary border-2 border-gg-primary">
-                      {index + 1}
-                    </div>
+                    <span className="text-5xl font-bold text-gray-100 select-none" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+                      {step.number}
+                    </span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
-                  <p className="text-gray-600">{step.description}</p>
+                  <h3 className="text-lg font-bold text-[#3E4B59] mb-3" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
                 </div>
-
-                {/* Arrow for desktop */}
-                {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
-                      <ArrowRight className="w-4 h-4 text-gg-primary" />
-                    </div>
-                  </div>
-                )}
               </div>
             )
           })}
         </div>
 
-        {/* CTA */}
-        <div className="mt-16 text-center">
-          <button className="bg-gg-primary hover:bg-gg-primary-700 text-white font-semibold px-8 py-4 rounded-xl transition-colors shadow-lg hover:shadow-xl">
+        <div className="mt-14 text-center">
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 bg-[#F08B1D] hover:bg-[#D97B1A] text-white font-semibold px-10 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+          >
             Start Making a Difference
-          </button>
+          </Link>
+          <p className="mt-3 text-sm text-gray-400">Free to join · No platform fees for donors</p>
         </div>
       </div>
     </section>
