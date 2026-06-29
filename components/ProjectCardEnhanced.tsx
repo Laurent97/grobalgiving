@@ -39,12 +39,12 @@ export default function ProjectCardEnhanced({ project, onFavorite, showDonateBut
 
       const { data } = await supabase
         .from('favorites')
-        .select('*')
+        .select('project_id')
         .eq('user_id', user.id)
         .eq('project_id', project.id)
-        .single()
+        .limit(1)
 
-      setIsFavorited(!!data)
+      setIsFavorited(Array.isArray(data) && data.length > 0)
     } catch (error) {
       setIsFavorited(false)
     }

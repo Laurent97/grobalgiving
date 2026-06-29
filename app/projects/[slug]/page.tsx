@@ -75,8 +75,8 @@ export default function ProjectPage() {
         setProject(data)
         const { data: { user } } = await supabase.auth.getUser()
         if (user && data) {
-          const { data: fav } = await supabase.from('favorites').select('*').eq('user_id', user.id).eq('project_id', data.id).maybeSingle()
-          setIsFavorited(!!fav)
+          const { data: fav } = await supabase.from('favorites').select('project_id').eq('user_id', user.id).eq('project_id', data.id).limit(1)
+          setIsFavorited(Array.isArray(fav) && fav.length > 0)
         }
       } catch (err) {
         console.error('Error fetching project:', err)

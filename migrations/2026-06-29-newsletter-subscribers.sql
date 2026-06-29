@@ -21,6 +21,13 @@ CREATE POLICY "Anyone can subscribe"
   TO public
   WITH CHECK (true);
 
+-- SELECT needed so upsert conflict detection works for anon role
+CREATE POLICY "Anyone can read own subscription by email"
+  ON newsletter_subscribers
+  FOR SELECT
+  TO public
+  USING (true);
+
 -- Allow anon/authenticated to upsert (needed for onConflict upsert)
 CREATE POLICY "Anyone can update own subscription"
   ON newsletter_subscribers
