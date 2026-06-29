@@ -52,14 +52,6 @@ export default function Hero() {
       />
 
       <div className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 text-white transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-        {/* Badge */}
-        <div className="flex justify-center mb-8">
-          <span className="inline-flex items-center gap-2 bg-[#F08B1D]/20 border border-[#F08B1D]/30 text-[#F8C07A] text-sm font-semibold px-4 py-2 rounded-full backdrop-blur-sm">
-            <ShieldCheck className="w-4 h-4" />
-            100% Verified Nonprofits · Transparent Impact
-          </span>
-        </div>
-
         {/* Headline */}
         <div className="text-center mb-10">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight mb-6" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
