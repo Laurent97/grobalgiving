@@ -74,7 +74,7 @@ async function getProjects(filters?: { search?: string; category?: string; sort?
     }
 
     if (filters?.sort === 'funded') {
-      query = query.order('current_amount', { ascending: false })
+      query = query.order('amount_received', { ascending: false })
     } else {
       query = query.order('created_at', { ascending: false })
     }

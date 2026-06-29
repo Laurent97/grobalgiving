@@ -24,7 +24,8 @@ export default function ProjectCard({ project, onFavorite }: ProjectCardProps) {
   const supabase = useSupabase()
   const router = useRouter()
 
-  const percentage = Math.min((project.current_amount / project.goal_amount) * 100, 100)
+  const raisedAmount = project.amount_received ?? project.current_amount ?? 0
+  const percentage = Math.min((raisedAmount / project.goal_amount) * 100, 100)
 
   const checkFavorite = async () => {
     try {
@@ -145,7 +146,7 @@ export default function ProjectCard({ project, onFavorite }: ProjectCardProps) {
           {/* Funding Info */}
           <div className="mb-4">
             <p className="text-sm font-semibold text-gray-900">
-              ${project.current_amount.toLocaleString()} raised
+              ${raisedAmount.toLocaleString()} raised
             </p>
             <p className="text-xs text-gray-600">of ${project.goal_amount.toLocaleString()} goal</p>
             <p className="text-xs text-gray-600 mt-1">{Math.round(percentage)}% funded</p>
