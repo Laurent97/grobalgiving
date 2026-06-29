@@ -1,14 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Globe, Heart, ShieldCheck, Award, Users, TrendingUp, Star, CheckCircle } from 'lucide-react'
-
-const trustBadges = [
-  { icon: ShieldCheck, text: '100% Secure', description: 'SSL encrypted, bank-level security on every transaction.' },
-  { icon: Award, text: 'Vetted Nonprofits', description: 'Every organization is verified before going live.' },
-  { icon: Heart, text: 'Transparent Impact', description: 'Regular updates so you always know where your money goes.' },
-  { icon: CheckCircle, text: 'Low Overhead', description: 'Minimal platform fees — more of your gift reaches its destination.' },
-]
+import { Globe, Heart, Users, TrendingUp } from 'lucide-react'
 
 function useCountUp(target: number, duration = 1800, shouldStart = false) {
   const [value, setValue] = useState(0)
@@ -62,22 +55,17 @@ export default function ImpactStats() {
   return (
     <section className="py-20 bg-white" ref={ref}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 text-[#F08B1D] text-xs font-semibold px-3 py-1.5 rounded-full mb-4 tracking-widest uppercase">
-            <Star className="w-3.5 h-3.5 fill-[#F08B1D]" />
-            Our Impact
-          </div>
           <h2 className="text-3xl md:text-4xl font-bold text-[#3E4B59] mb-3" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
-            Changing Lives at Scale
+            Our Impact So Far
           </h2>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            Real numbers. Real people. Real change — powered by donors like you.
+            Updated in real time from active projects around the world.
           </p>
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {statItems.map((stat, i) => {
             const Icon = stat.icon
             return (
@@ -92,27 +80,6 @@ export default function ImpactStats() {
           })}
         </div>
 
-        {/* Trust badges */}
-        <div className="bg-[#3E4B59] rounded-2xl p-10">
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <ShieldCheck className="w-5 h-5 text-[#F08B1D]" />
-            <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Aleo, Georgia, serif' }}>Why Donors Trust GlobalGiving</h3>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trustBadges.map((badge, i) => {
-              const Icon = badge.icon
-              return (
-                <div key={i} className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#F08B1D]/15 rounded-xl mb-4">
-                    <Icon className="w-6 h-6 text-[#F08B1D]" />
-                  </div>
-                  <h4 className="font-semibold text-white mb-1">{badge.text}</h4>
-                  <p className="text-sm text-white/55 leading-relaxed">{badge.description}</p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
       </div>
     </section>
   )

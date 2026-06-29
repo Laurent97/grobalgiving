@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, ChevronDown, ShieldCheck, Star, Users } from 'lucide-react'
+import { Search, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -90,16 +90,16 @@ export default function Hero() {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
           <Link
-            href="/projects"
+            href="/signup"
             className="inline-flex items-center justify-center gap-2 bg-[#F08B1D] hover:bg-[#D97B1A] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-base"
           >
-            Explore All Projects
+            Start Donating
           </Link>
           <Link
-            href="/signup"
+            href="/login"
             className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 backdrop-blur-sm text-base"
           >
-            Start Giving Today
+            Sign In
           </Link>
         </div>
 
@@ -118,21 +118,6 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Trust indicators */}
-        <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-white/60 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#F08B1D]" />
-            <span>50,000+ donors worldwide</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-[#F08B1D] fill-[#F08B1D]" />
-            <span>4.9 / 5 donor satisfaction</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#F08B1D]" />
-            <span>Every nonprofit vetted</span>
-          </div>
-        </div>
       </div>
 
       {/* Scroll indicator */}
