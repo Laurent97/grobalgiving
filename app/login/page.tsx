@@ -2,30 +2,31 @@
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
+import { Eye, EyeOff, Loader2, AlertCircle, Heart } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 function LoginPageContent() {
-  const [email, setEmail] = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const [showPw, setShowPw]     = useState(false)
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
+  const router       = useRouter()
   const searchParams = useSearchParams()
-  const andthen = searchParams.get('andthen') || '/'
+  const andthen      = searchParams.get('andthen') || '/'
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setError(error.message)
       setLoading(false)
     } else {
-      // Ensure a profile row exists for the user (create on first login only)
       try {
         const { data: userData } = await supabase.auth.getUser()
         const user = userData?.user
@@ -38,66 +39,169 @@ function LoginPageContent() {
       } catch (e) {
         console.warn('Could not ensure profile on login', e)
       }
-
       router.push(andthen)
       router.refresh()
     }
   }
 
   return (
-    <div className="container mx-auto max-w-md px-4 py-16">
-      <h1 className="text-3xl font-bold mb-8">Login to Your Account</h1>
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-      <form onSubmit={handleLogin} className="space-y-4">
+    <div className="min-h-screen flex" style={{ background: '#F5F0E8' }}>
+
+      {/* ── Left panel: branding ── */}
+      <div
+        className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 text-white"
+        style={{ background: 'linear-gradient(160deg, #1B2E1B 0%, #2E7D32 60%, #388E3C 100%)' }}
+      >
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#F9A825' }}>
+            <Heart className="w-5 h-5 fill-white text-white" />
+          </span>
+          <span className="font-bold text-xl" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
+        </Link>
+
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2"
-            required
-          />
+          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#F9A825' }}>
+            Rooted in Giving
+          </p>
+          <h2 className="text-4xl font-bold leading-snug mb-6" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+            Every act of giving<br />creates a ripple<br />of change.
+          </h2>
+          <p className="text-white/65 text-base leading-relaxed max-w-xs">
+            Sign in to track your impact, manage donations, and stay connected with the communities you support.
+          </p>
         </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2"
-            required
-          />
+
+        <div className="flex gap-6">
+          {[
+            { value: '4', label: 'Countries' },
+            { value: '200+', label: 'Projects' },
+            { value: '50K+', label: 'Lives touched' },
+          ].map(s => (
+            <div key={s.label}>
+              <p className="text-2xl font-bold" style={{ fontFamily: 'Aleo, Georgia, serif' }}>{s.value}</p>
+              <p className="text-xs text-white/55 mt-0.5">{s.label}</p>
+            </div>
+          ))}
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-gg-primary text-white py-2 rounded-lg hover:bg-gg-primary-700 disabled:opacity-50 transition"
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      <p className="mt-4 text-center text-sm text-gray-600">
-        Don't have an account?{' '}
-        <a href={andthen ? `/signup?andthen=${encodeURIComponent(andthen)}` : '/signup'} className="text-gg-primary hover:underline">
-          Sign up
-        </a>
-      </p>
+      </div>
+
+      {/* ── Right panel: form ── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md">
+
+          {/* Mobile logo */}
+          <Link href="/" className="flex lg:hidden items-center gap-2 mb-8 justify-center">
+            <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#2E7D32' }}>
+              <Heart className="w-4 h-4 fill-white text-white" />
+            </span>
+            <span className="font-bold text-lg text-[#1B2E1B]" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
+          </Link>
+
+          <h1 className="text-3xl font-bold text-[#1B2E1B] mb-1" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+            Welcome back
+          </h1>
+          <p className="text-gray-500 text-sm mb-8">
+            Sign in to your account to continue your giving journey.
+          </p>
+
+          {/* Error */}
+          {error && (
+            <div className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-6 text-sm">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5" noValidate>
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold text-[#1B2E1B] mb-1.5">
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
+                style={{ '--tw-ring-color': '#2E7D32' } as React.CSSProperties}
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="password" className="block text-sm font-semibold text-[#1B2E1B]">
+                  Password
+                </label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs font-medium hover:underline"
+                  style={{ color: '#2E7D32' }}
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPw ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
+                  style={{ '--tw-ring-color': '#2E7D32' } as React.CSSProperties}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                  aria-label={showPw ? 'Hide password' : 'Show password'}
+                >
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 mt-2"
+              style={{ background: loading ? '#388E3C' : '#2E7D32' }}
+            >
+              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in…</> : 'Sign in'}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-gray-500">
+            Don&apos;t have an account?{' '}
+            <Link
+              href={andthen && andthen !== '/' ? `/signup?andthen=${encodeURIComponent(andthen)}` : '/signup'}
+              className="font-semibold hover:underline"
+              style={{ color: '#2E7D32' }}
+            >
+              Create one — it&apos;s free
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="container mx-auto max-w-md px-4 py-16"><p>Loading...</p></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F5F0E8' }}>
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#2E7D32' }} />
+      </div>
+    }>
       <LoginPageContent />
     </Suspense>
   )
