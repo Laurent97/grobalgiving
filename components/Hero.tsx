@@ -271,7 +271,7 @@ export default function Hero({ stats }: { stats?: HeroStats }) {
     e.preventDefault()
     if (!searchQuery.trim()) return
     setIsSearching(true)
-    router.push(`/?search=${encodeURIComponent(searchQuery.trim())}`)
+    router.push(`/?search=${encodeURIComponent(searchQuery.trim())}#all-projects`)
   }
 
   const statItems = stats ? [
@@ -339,7 +339,7 @@ export default function Hero({ stats }: { stats?: HeroStats }) {
             Browse All Projects
           </Link>
           <Link
-            href="/?category=disaster"
+            href="/?category=disaster#all-projects"
             className="inline-flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 border border-white/35 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 backdrop-blur-sm text-base hover:-translate-y-0.5"
           >
             View Urgent Causes
@@ -352,7 +352,7 @@ export default function Hero({ stats }: { stats?: HeroStats }) {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => router.push(`/?category=${cat.id}`)}
+              onClick={() => router.push(`/?category=${cat.id}#all-projects`)}
               className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#F08B1D]/70 text-white/85 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 backdrop-blur-sm"
             >
               <span>{cat.icon}</span>

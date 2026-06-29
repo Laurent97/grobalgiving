@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import ProjectCard from '@/components/ProjectCard'
 import Hero from '@/components/Hero'
@@ -9,6 +10,7 @@ import HowItWorks from '@/components/HowItWorks'
 import Testimonials from '@/components/Testimonials'
 import SearchFilterClient from '@/components/SearchFilterClient'
 import Newsletter from '@/components/Newsletter'
+import ScrollToProjects from '@/components/ScrollToProjects'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -123,6 +125,11 @@ export default async function Home({
         projectsFunded={stats.projectsFunded}
         countries={stats.countries}
       />
+
+      {/* Auto-scroll to projects when filter params are present */}
+      <Suspense fallback={null}>
+        <ScrollToProjects />
+      </Suspense>
 
       {/* All Projects Section */}
       <section id="all-projects" className="py-16 bg-white">
