@@ -106,7 +106,7 @@ export default async function AdminDashboard() {
             trend={12.5}
             trendLabel="vs last month"
             icon={DollarSign}
-            iconColor="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+            iconColor="bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
             href="/admin/donations"
           />
           <MetricCard
@@ -115,7 +115,7 @@ export default async function AdminDashboard() {
             trend={8.3}
             trendLabel="vs last month"
             icon={HeartHandshake}
-            iconColor="bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+            iconColor="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
             href="/admin/donations"
           />
           <MetricCard
@@ -124,7 +124,7 @@ export default async function AdminDashboard() {
             trend={5.2}
             trendLabel="vs last month"
             icon={LayoutGrid}
-            iconColor="bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
+            iconColor="bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400"
             href="/admin/projects"
           />
           {canViewSection(profile.role, 'users') && (
@@ -144,7 +144,7 @@ export default async function AdminDashboard() {
           <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Donations</h2>
-              <Link href="/admin/donations" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+              <Link href="/admin/donations" className="text-sm hover:underline" style={{ color: '#F08B1D' }}>
                 View all
               </Link>
             </div>
@@ -248,7 +248,7 @@ export default async function AdminDashboard() {
                 <ActivityItem
                   key={`project-${project.id}`}
                   icon={LayoutGrid}
-                  iconColor="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                  iconColor="bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400"
                   title={`Project created: ${project.title}`}
                   description={`Status: ${project.status}`}
                   time={formatTime(project.created_at)}
@@ -266,7 +266,7 @@ export default async function AdminDashboard() {
               {canViewSection(profile.role, 'vetting') && (
               <Link
                 href="/admin/vetting"
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
               >
                 <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                   <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
@@ -280,7 +280,7 @@ export default async function AdminDashboard() {
               {canViewSection(profile.role, 'donations') && (
               <Link
                 href="/admin/donations"
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
               >
                 <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -294,10 +294,10 @@ export default async function AdminDashboard() {
               {canViewSection(profile.role, 'payment_methods') && (
               <Link
                 href="/admin/payment-methods"
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
               >
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">Payment Methods</p>
@@ -308,7 +308,7 @@ export default async function AdminDashboard() {
               {canViewSection(profile.role, 'users') && (
               <Link
                 href="/admin/users"
-                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
               >
                 <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                   <Users className="w-5 h-5 text-amber-600 dark:text-amber-400" />

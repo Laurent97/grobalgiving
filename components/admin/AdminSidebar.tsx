@@ -105,9 +105,11 @@ export default function AdminSidebar({ isOpen, onClose, role }: AdminSidebarProp
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-800">
-          <Shield className="w-6 h-6 text-blue-600 mr-2" />
-          <span className="text-lg font-bold text-gray-900 dark:text-white">Admin</span>
+        <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-800 gap-2.5">
+          <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#F08B1D' }}>
+            <Shield className="w-4 h-4 text-white" />
+          </span>
+          <span className="text-lg font-bold" style={{ color: '#3E4B59', fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
@@ -139,11 +141,12 @@ export default function AdminSidebar({ isOpen, onClose, role }: AdminSidebarProp
                           key={sub.name}
                           href={sub.href}
                           onClick={onClose}
-                          className={`block px-3 py-2 rounded-lg text-sm ${
+                          className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                             isActive(sub.href)
-                              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                              ? 'bg-orange-50 dark:bg-orange-900/20'
                               : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                           }`}
+                          style={isActive(sub.href) ? { color: '#F08B1D' } : {}}
                         >
                           {sub.name}
                         </Link>
@@ -161,11 +164,12 @@ export default function AdminSidebar({ isOpen, onClose, role }: AdminSidebarProp
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive(item.href)
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                    ? 'bg-orange-50 dark:bg-orange-900/20'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
+              style={isActive(item.href) ? { color: '#F08B1D' } : {}}
               >
                 <Icon className="w-5 h-5" />
                 <span>{item.name}</span>

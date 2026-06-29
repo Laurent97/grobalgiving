@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Mail, MessageCircle, MapPin } from 'lucide-react'
+import { Mail, MessageCircle, MapPin, Heart, ShoppingCart, User } from 'lucide-react'
 import { CONTACT } from '@/lib/contact'
 
 const navLinks = [
@@ -7,6 +7,12 @@ const navLinks = [
   { label: 'About', href: '/about' },
   { label: 'Impact', href: '/impact' },
   { label: 'Contact', href: '/contact' },
+]
+
+const actionLinks = [
+  { label: 'Donate', href: '/', icon: Heart },
+  { label: 'My Account', href: '/account', icon: User },
+  { label: 'Cart', href: '/cart', icon: ShoppingCart },
 ]
 
 const legalLinks = [
@@ -18,10 +24,10 @@ export default function Footer() {
   return (
     <footer className="bg-[#2a3440] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
 
           {/* Brand */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-[#F08B1D] rounded-lg flex items-center justify-center text-white font-bold text-sm">
                 AG
@@ -54,7 +60,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navigation + Legal */}
+          {/* Navigation */}
           <div>
             <h4 className="font-semibold text-white text-sm mb-5 tracking-widest uppercase">Platform</h4>
             <ul className="space-y-3">
@@ -70,6 +76,21 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/40 hover:text-white/70 text-xs transition-colors">
                     {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Quick Actions */}
+          <div>
+            <h4 className="font-semibold text-white text-sm mb-5 tracking-widest uppercase">Quick Links</h4>
+            <ul className="space-y-3">
+              {actionLinks.map(({ label, href, icon: Icon }) => (
+                <li key={href + label}>
+                  <Link href={href} className="flex items-center gap-2 text-white/55 hover:text-[#F08B1D] text-sm transition-colors group">
+                    <Icon className="w-3.5 h-3.5 group-hover:text-[#F08B1D] transition-colors" />
+                    {label}
                   </Link>
                 </li>
               ))}
