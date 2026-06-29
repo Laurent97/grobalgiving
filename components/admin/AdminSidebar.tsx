@@ -13,6 +13,7 @@ import {
   LayoutGrid,
   LifeBuoy,
   LogOut,
+  MonitorPlay,
   Settings,
   Shield,
   Users
@@ -70,6 +71,14 @@ const navigation = (role: UserRole | null | undefined): NavItem[] => [
     ]
   },
   { name: 'Users', href: '/admin/users', icon: Users, show: canViewSection(role, 'users') },
+  {
+    name: 'Content',
+    icon: MonitorPlay,
+    show: role === 'admin',
+    items: [
+      { name: 'Hero Slideshow', href: '/admin/slideshow', show: role === 'admin' },
+    ]
+  },
   { name: 'Reports', href: '/admin', icon: BarChart3, show: canViewSection(role, 'reports') },
   { name: 'Support', href: '/admin', icon: LifeBuoy, show: canViewSection(role, 'support') },
   { name: 'Settings', href: '/admin', icon: Settings, show: canViewSection(role, 'settings') },
@@ -77,7 +86,7 @@ const navigation = (role: UserRole | null | undefined): NavItem[] => [
 
 export default function AdminSidebar({ isOpen, onClose, role }: AdminSidebarProps) {
   const pathname = usePathname()
-  const [expanded, setExpanded] = useState<string[]>(['Projects', 'Donations', 'Payment Methods'])
+  const [expanded, setExpanded] = useState<string[]>(['Projects', 'Donations', 'Payment Methods', 'Content'])
 
   const toggleGroup = (name: string) => {
     setExpanded((prev) =>
