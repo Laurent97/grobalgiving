@@ -16,7 +16,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "By accessing or using GlobalGiving (grobalgiving.vercel.app / globalgiving.online), you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree, please do not use our platform. We reserve the right to update these Terms at any time; continued use after changes constitutes acceptance.",
+        text: "By accessing or using AcaciaGiving (acaciagiving.org), you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree, please do not use our platform. We reserve the right to update these Terms at any time; continued use after changes constitutes acceptance.",
       },
     ],
   },
@@ -172,7 +172,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "For questions about these Terms of Service, please contact us at legal@globalgiving.online. We will respond within 30 business days.",
+        text: "For questions about these Terms of Service, please contact us at support@acaciagiving.org. We will respond within 30 business days.",
       },
     ],
   },

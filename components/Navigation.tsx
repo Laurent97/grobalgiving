@@ -48,6 +48,7 @@ export default function Navigation() {
     { href: '/', label: 'Projects' },
     { href: '/about', label: 'About' },
     { href: '/impact', label: 'Impact' },
+    { href: '/contact', label: 'Contact' },
   ]
 
   return (

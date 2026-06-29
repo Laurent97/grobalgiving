@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Aleo, Open_Sans } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { ToastProvider } from "@/components/Toast";
 
 const aleo = Aleo({
@@ -18,51 +19,51 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "GlobalGiving — Together We Make a Difference",
-    template: "%s | GlobalGiving",
+    default: "AcaciaGiving — Rooted in Giving",
+    template: "%s | AcaciaGiving",
   },
   description:
-    "GlobalGiving connects donors with vetted nonprofits and community projects around the world. Fund education, health, environment, disaster relief and more.",
-  metadataBase: new URL("https://globalgiving.online"),
+    "AcaciaGiving connects donors with vetted nonprofits and community projects across Africa and the world. Fund education, health, environment, disaster relief and more.",
+  metadataBase: new URL("https://acaciagiving.org"),
   keywords: [
     "donate",
     "crowdfunding",
     "nonprofits",
     "charity",
-    "GlobalGiving",
+    "AcaciaGiving",
     "humanitarian",
     "Africa",
     "education",
     "health",
     "environment",
   ],
-  authors: [{ name: "GlobalGiving" }],
-  creator: "GlobalGiving",
-  publisher: "GlobalGiving",
+  authors: [{ name: "AcaciaGiving" }],
+  creator: "AcaciaGiving",
+  publisher: "AcaciaGiving",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://globalgiving.online",
-    siteName: "GlobalGiving",
-    title: "GlobalGiving — Together We Make a Difference",
+    url: "https://acaciagiving.org",
+    siteName: "AcaciaGiving",
+    title: "AcaciaGiving — Rooted in Giving",
     description:
-      "Connect with vetted nonprofits and community projects around the world. Your donation creates real, measurable impact.",
+      "Connect with vetted nonprofits and community projects across Africa. Your donation creates real, measurable impact.",
     images: [
       {
         url: "/images/og-default.svg",
         width: 1200,
         height: 630,
-        alt: "GlobalGiving — Together We Make a Difference",
+        alt: "AcaciaGiving — Rooted in Giving",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    site: "@GlobalGiving",
-    creator: "@GlobalGiving",
-    title: "GlobalGiving — Together We Make a Difference",
+    site: "@acaciagiving",
+    creator: "@acaciagiving",
+    title: "AcaciaGiving — Rooted in Giving",
     description:
-      "Connect with vetted nonprofits and community projects around the world.",
+      "Connect with vetted nonprofits and community projects across Africa.",
     images: ["/images/og-default.svg"],
   },
   icons: {
@@ -74,11 +75,11 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   themeColor: "#F08B1D",
-  applicationName: "GlobalGiving",
+  applicationName: "AcaciaGiving",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "GlobalGiving",
+    title: "AcaciaGiving",
   },
   formatDetection: {
     telephone: false,
@@ -99,6 +100,7 @@ export default function RootLayout({
         <ToastProvider>
           <Navigation />
           {children}
+          <Footer />
         </ToastProvider>
       </body>
     </html>

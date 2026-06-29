@@ -161,7 +161,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us at privacy@globalgiving.online. We aim to respond to all requests within 30 days.",
+        text: "If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us at support@acaciagiving.org. We aim to respond to all requests within 30 days.",
       },
     ],
   },
