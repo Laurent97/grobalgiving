@@ -9,18 +9,24 @@ export async function POST(req: Request) {
     }
 
     const supabase = await createClient()
+    const clean = email.trim().toLowerCase()
 
     const { error } = await supabase
       .from('newsletter_subscribers')
-      .upsert({ email: email.trim().toLowerCase(), subscribed_at: new Date().toISOString() }, { onConflict: 'email', ignoreDuplicates: true })
+      .upsert({ email: clean, subscribed_at: new Date().toISOString() }, { onConflict: 'email' })
 
     if (error) {
-      console.error('Newsletter subscribe error:', error)
-      return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 })
+      // Unique-violation means already subscribed — treat as success
+      if (error.code === '23505') {
+        return NextResponse.json({ success: true })
+      }
+      console.error('Newsletter subscribe error:', error.code, error.message)
+      return NextResponse.json({ error: 'Failed to subscribe. Please try again.' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (err: any) {
+    console.error('Newsletter route exception:', err?.message)
     return NextResponse.json({ error: err?.message || 'Server error' }, { status: 500 })
   }
 }
