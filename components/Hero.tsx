@@ -27,26 +27,64 @@ function fmtRaised(n: number) {
 }
 
 // ---------------------------------------------------------------------------
-// Slideshow media — replace src values with local /images/hero/ paths once
-// you have real assets. These Unsplash URLs work immediately as placeholders.
+// Slideshow media — giving/donation/impact themed.
+// Images: Unsplash (free, no key needed).
+// Videos: Pexels free CDN (direct MP4 links, no auth needed, muted autoplay).
+// Replace any src with a local /public/images/hero/giving/ path at any time.
 // ---------------------------------------------------------------------------
 type SlideType = 'image' | 'video'
 interface Slide { id: number; type: SlideType; src: string; alt: string; poster?: string }
 
 const SLIDES: Slide[] = [
-  { id: 1,  type: 'image', src: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1920&q=80', alt: 'Children learning in school' },
-  { id: 2,  type: 'image', src: 'https://images.unsplash.com/photo-1509099955921-f0b4ed0c175c?w=1920&q=80', alt: 'Community gathering' },
-  { id: 3,  type: 'image', src: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1920&q=80', alt: 'Tree planting and environment' },
-  { id: 4,  type: 'image', src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80', alt: 'Clean water project' },
-  { id: 5,  type: 'image', src: 'https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=1920&q=80', alt: 'Women empowerment program' },
-  { id: 6,  type: 'image', src: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1920&q=80', alt: 'Healthcare workers in community' },
-  { id: 7,  type: 'image', src: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80', alt: 'Agriculture and farming' },
-  { id: 8,  type: 'image', src: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1920&q=80', alt: 'Community celebration' },
-  { id: 9,  type: 'image', src: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=1920&q=80', alt: 'Education impact' },
-  { id: 10, type: 'image', src: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1920&q=80', alt: 'African community landscape' },
+  // ── Images: hands giving, helping, volunteers, donation moments ──
+  { id: 1,  type: 'image', src: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1920&q=80', alt: 'Volunteer giving food to community' },
+  { id: 2,  type: 'image', src: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1920&q=80', alt: 'Children receiving education support' },
+  { id: 3,  type: 'image', src: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1920&q=80', alt: 'Healthcare worker helping patient' },
+  { id: 4,  type: 'image', src: 'https://images.unsplash.com/photo-1509099955921-f0b4ed0c175c?w=1920&q=80', alt: 'Community gathering and support' },
+  { id: 5,  type: 'image', src: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1920&q=80', alt: 'People coming together to help' },
+  { id: 6,  type: 'image', src: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=1920&q=80', alt: 'Hands reaching out in support' },
+  { id: 7,  type: 'image', src: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=1920&q=80', alt: 'Volunteers working together' },
+  { id: 8,  type: 'image', src: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1920&q=80', alt: 'Community members sharing a meal' },
+  { id: 9,  type: 'image', src: 'https://images.unsplash.com/photo-1607748862156-7c548e7e98f4?w=1920&q=80', alt: 'Doctor providing medical aid' },
+  { id: 10, type: 'image', src: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80', alt: 'Person donating and helping others' },
+  { id: 11, type: 'image', src: 'https://images.unsplash.com/photo-1526958097901-5e6d742d3371?w=1920&q=80', alt: 'Hands giving donation' },
+  { id: 12, type: 'image', src: 'https://images.unsplash.com/photo-1518398046578-8cca57782e17?w=1920&q=80', alt: 'Education support for children' },
+
+  // ── Videos: volunteers, giving, community help (Pexels free CDN) ──
+  {
+    id: 101, type: 'video',
+    src: 'https://videos.pexels.com/video-files/6646918/6646918-uhd_2560_1440_25fps.mp4',
+    poster: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1920&q=60',
+    alt: 'Volunteers helping community',
+  },
+  {
+    id: 102, type: 'video',
+    src: 'https://videos.pexels.com/video-files/8159958/8159958-uhd_2560_1440_25fps.mp4',
+    poster: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1920&q=60',
+    alt: 'Healthcare workers giving aid',
+  },
+  {
+    id: 103, type: 'video',
+    src: 'https://videos.pexels.com/video-files/6194102/6194102-uhd_2560_1440_25fps.mp4',
+    poster: 'https://images.unsplash.com/photo-1509099955921-f0b4ed0c175c?w=1920&q=60',
+    alt: 'Community coming together',
+  },
+  {
+    id: 104, type: 'video',
+    src: 'https://videos.pexels.com/video-files/3044477/3044477-uhd_2560_1440_25fps.mp4',
+    poster: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1920&q=60',
+    alt: 'Sharing food and resources',
+  },
+  {
+    id: 105, type: 'video',
+    src: 'https://videos.pexels.com/video-files/6785821/6785821-uhd_2560_1440_25fps.mp4',
+    poster: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=1920&q=60',
+    alt: 'Hands giving and receiving donation',
+  },
 ]
 
-const SLIDE_DURATION = 7000   // ms per slide
+const SLIDE_DURATION = 8000   // ms per image slide
+const VIDEO_MAX_MS   = 20000  // max ms to wait for a video before skipping
 const TRANSITION_MS  = 1400   // cross-fade duration
 
 function shuffle<T>(arr: T[]): T[] {
@@ -89,10 +127,15 @@ function HeroSlideshow() {
   }, [resetTimer])
 
   useEffect(() => {
-    if (playlist[current]?.type === 'video' && videoRef.current) {
-      videoRef.current.play().catch(() => {})
+    if (playlist[current]?.type === 'video') {
+      // Pause the interval while the video plays; advance on end/error
+      if (timerRef.current) clearInterval(timerRef.current)
+      if (videoRef.current) videoRef.current.play().catch(() => { advance(); resetTimer() })
+      // Safety timeout: skip if video stalls
+      const safety = setTimeout(() => { advance(); resetTimer() }, VIDEO_MAX_MS)
+      return () => clearTimeout(safety)
     }
-  }, [current, playlist])
+  }, [current, playlist, advance, resetTimer])
 
   const handleDotClick = (i: number) => {
     if (i === current) return
@@ -117,6 +160,7 @@ function HeroSlideshow() {
             autoPlay muted playsInline
             poster={slide.poster}
             onEnded={() => { advance(); resetTimer() }}
+            onError={() => { advance(); resetTimer() }}
             className="w-full h-full object-cover"
           />
         </div>
