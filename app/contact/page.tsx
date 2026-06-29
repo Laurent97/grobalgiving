@@ -1,4 +1,4 @@
-import { Mail, Phone, MessageCircle, MapPin, ExternalLink } from 'lucide-react'
+import { Mail, MessageCircle, MapPin, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { CONTACT } from '@/lib/contact'
 
@@ -39,7 +39,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold text-[#3E4B59] mb-8 text-center" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
             Primary Contact
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto gap-5">
             <a
               href={`mailto:${CONTACT.primary.email}`}
               className="group flex flex-col items-center text-center bg-gray-50 hover:bg-white border border-gray-100 hover:border-[#F08B1D]/30 hover:shadow-lg rounded-2xl p-8 transition-all duration-300"
@@ -51,16 +51,6 @@ export default function ContactPage() {
               <p className="text-sm text-gray-500 break-all">{CONTACT.primary.email}</p>
             </a>
 
-            <a
-              href={`tel:${CONTACT.primary.phone.replace(/\s/g, '')}`}
-              className="group flex flex-col items-center text-center bg-gray-50 hover:bg-white border border-gray-100 hover:border-[#F08B1D]/30 hover:shadow-lg rounded-2xl p-8 transition-all duration-300"
-            >
-              <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Phone className="w-7 h-7 text-[#F08B1D]" />
-              </div>
-              <p className="font-semibold text-[#3E4B59] mb-1">Phone</p>
-              <p className="text-sm text-gray-500">{CONTACT.primary.phone}</p>
-            </a>
 
             <a
               href={CONTACT.primary.whatsappUrl}
@@ -108,12 +98,6 @@ export default function ContactPage() {
                       <p className="text-sm text-gray-700">{office.address}</p>
                       <p className="text-xs text-gray-400 mt-0.5">{office.locationCode}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-gray-400 shrink-0" />
-                    <a href={`mailto:${office.email}`} className="text-sm text-[#F08B1D] hover:underline">
-                      {office.email}
-                    </a>
                   </div>
                 </div>
                 <a

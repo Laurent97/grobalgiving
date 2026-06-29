@@ -85,7 +85,7 @@ export function generateDonationConfirmationEmail({
             Stay tuned for project updates and the impact you're making!
           </p>
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 14px;">
-            <p>With gratitude,<br/>The GlobalGiving Team</p>
+            <p>With gratitude,<br/>The AcaciaGiving Team</p>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@ export function generateDonationVerifiedEmail({
             Thank you for being a changemaker!
           </p>
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 14px;">
-            <p>With gratitude,<br/>The GlobalGiving Team</p>
+            <p>With gratitude,<br/>The AcaciaGiving Team</p>
           </div>
         </div>
       </div>
@@ -177,7 +177,7 @@ export function generateDonationRejectedEmail({
             If you believe this is an error, please contact our support team with your donation reference.
           </p>
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 14px;">
-            <p>With gratitude,<br/>The GlobalGiving Team</p>
+            <p>With gratitude,<br/>The AcaciaGiving Team</p>
           </div>
         </div>
       </div>

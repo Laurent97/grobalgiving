@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { Heart, Globe, ShieldCheck, Users, Award, Target, ArrowRight, CheckCircle } from 'lucide-react'
 
 export const metadata = {
-  title: 'About Us | GlobalGiving',
-  description: 'Learn about GlobalGiving\'s mission to connect donors with high-impact nonprofit projects around the world.',
+  title: 'About Us | AcaciaGiving',
+  description: 'Learn about AcaciaGiving\'s mission to connect donors with high-impact nonprofit projects across Africa and the world.',
 }
 
 const values = [
@@ -47,12 +47,12 @@ const team = [
 ]
 
 const milestones = [
-  { year: '2019', event: 'GlobalGiving founded with a mission to connect donors and nonprofits worldwide.' },
-  { year: '2020', event: 'Launched our first 50 vetted projects across 12 countries. Raised $120K in Year 1.' },
-  { year: '2021', event: 'Expanded to 25 countries. Introduced monthly recurring giving and impact tracking.' },
-  { year: '2022', event: 'Crossed $500K in total donations. Launched mobile-optimized donor portal.' },
-  { year: '2023', event: 'Reached 10,000+ donors. Added crypto and mobile money payment options.' },
-  { year: '2024', event: 'Surpassed $1M raised. Operating across 45+ countries with 200+ active projects.' },
+  { year: '2019', event: 'AcaciaGiving founded with a mission to connect donors and nonprofits worldwide.' },
+  { year: '2020', event: 'Launched our first vetted projects across Africa. Established offices in Nairobi and Wau.' },
+  { year: '2021', event: 'Expanded operations to DR Congo and Morocco. Introduced monthly recurring giving.' },
+  { year: '2022', event: 'Launched mobile-optimized donor portal and mobile money payment support.' },
+  { year: '2023', event: 'Added crypto payment options and impact tracking for all active projects.' },
+  { year: '2024', event: 'Growing across Africa with active projects in health, education, and environment.' },
 ]
 
 export default function AboutPage() {
@@ -76,7 +76,7 @@ export default function AboutPage() {
             <span className="block text-[#F08B1D]">to Real Impact</span>
           </h1>
           <p className="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
-            GlobalGiving was built on a simple belief: that ordinary people, given the right tools and information, can change the world. We exist to make that possible.
+            AcaciaGiving was built on a simple belief: that ordinary people, given the right tools and information, can change the world. We exist to make that possible.
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
@@ -99,7 +99,7 @@ export default function AboutPage() {
                 Democratizing Access to Global Philanthropy
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                We believe that the desire to do good is universal — but access to trusted, transparent giving opportunities is not. GlobalGiving bridges that gap by rigorously vetting nonprofits and providing donors with the information they need to give with confidence.
+                We believe that the desire to do good is universal — but access to trusted, transparent giving opportunities is not. AcaciaGiving bridges that gap by rigorously vetting nonprofits and providing donors with the information they need to give with confidence.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed mb-8">
                 Whether you give $10 or $10,000, you deserve to know your donation is making a real difference. We track every project, publish regular updates from the field, and ensure every organization on our platform meets our strict standards for governance and impact.
@@ -203,7 +203,7 @@ export default function AboutPage() {
               The Team
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-[#3E4B59] mb-4" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
-              The People Behind GlobalGiving
+              The People Behind AcaciaGiving
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
               A passionate, globally distributed team committed to making philanthropy work better for everyone.
@@ -236,7 +236,7 @@ export default function AboutPage() {
             Ready to Make a Difference?
           </h2>
           <p className="text-lg text-white/65 mb-10 max-w-xl mx-auto">
-            Whether you're a donor, a nonprofit, or a corporate partner — there's a place for you in the GlobalGiving community.
+            Whether you're a donor, a nonprofit, or a corporate partner — there's a place for you in the AcaciaGiving community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/" className="inline-flex items-center gap-2 bg-[#F08B1D] hover:bg-[#D97B1A] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">

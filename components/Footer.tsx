@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Mail, Phone, MessageCircle, MapPin, ExternalLink } from 'lucide-react'
+import { Mail, MessageCircle, MapPin } from 'lucide-react'
 import { CONTACT } from '@/lib/contact'
 
 const navLinks = [
@@ -89,14 +89,6 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`tel:${CONTACT.primary.phone.replace(/\s/g, '')}`} className="flex items-start gap-3 group">
-                  <Phone className="w-4 h-4 text-[#F08B1D] mt-0.5 shrink-0" />
-                  <span className="text-white/55 group-hover:text-white text-sm transition-colors">
-                    {CONTACT.primary.phone}
-                  </span>
-                </a>
-              </li>
-              <li>
                 <a href={CONTACT.primary.whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
                   <MessageCircle className="w-4 h-4 text-[#F08B1D] mt-0.5 shrink-0" />
                   <span className="text-white/55 group-hover:text-white text-sm transition-colors">
@@ -119,7 +111,7 @@ export default function Footer() {
                       <p className="text-white/75 text-sm font-medium group-hover:text-[#F08B1D] transition-colors">
                         {office.flag} {office.country}{office.isHQ ? ' (HQ)' : ''}
                       </p>
-                      <p className="text-white/40 text-xs mt-0.5">{office.city}</p>
+                      <p className="text-white/40 text-xs mt-0.5">{office.locationCode}</p>
                     </div>
                   </a>
                 </li>

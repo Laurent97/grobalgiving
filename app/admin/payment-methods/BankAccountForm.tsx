@@ -74,7 +74,7 @@ export default function BankAccountForm({ initialData, onSuccess, onCancel }: Ba
             value={formData.account_name}
             onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
             className={inputClasses}
-            placeholder="GlobalGiving International Account"
+            placeholder="AcaciaGiving Account"
             required
           />
         </div>

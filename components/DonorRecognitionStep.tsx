@@ -194,7 +194,7 @@ export default function DonorRecognitionStep({ totalAmount, currency, onContinue
                 <div className="flex-1">
                   <div className="font-semibold text-gray-900">Make my donation anonymous</div>
                   <p className="text-sm text-gray-600 mt-1">
-                    GlobalGiving will use my information to provide donation updates, but my name and contact information will not be shared with the organizations.
+                    AcaciaGiving will use my information to provide donation updates, but my name and contact information will not be shared with the organizations.
                   </p>
                 </div>
               </label>

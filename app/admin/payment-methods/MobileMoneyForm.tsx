@@ -107,7 +107,7 @@ export default function MobileMoneyForm({ initialData, onSuccess, onCancel }: Mo
             value={formData.account_name}
             onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
             className={inputClasses}
-            placeholder="GlobalGiving Foundation"
+            placeholder="AcaciaGiving"
             required
           />
         </div>

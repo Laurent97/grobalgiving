@@ -1,4 +1,4 @@
-# GlobalGiving Clone - Complete Crowdfunding Platform
+# AcaciaGiving - Complete Crowdfunding Platform
 
 A full-stack crowdfunding platform built with **Next.js 14**, **Supabase**, and **Stripe**. This platform enables nonprofits to create fundraising campaigns and donors to contribute to causes they care about.
 
@@ -295,7 +295,7 @@ Expected behavior:
 
 ```bash
 git add .
-git commit -m "GlobalGiving crowdfunding platform"
+git commit -m "AcaciaGiving crowdfunding platform"
 git push origin main
 ```
 

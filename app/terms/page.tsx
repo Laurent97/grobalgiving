@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Read GlobalGiving's Terms of Service — the rules and guidelines that govern your use of our donation platform.",
+  description: "Read AcaciaGiving's Terms of Service — the rules and guidelines that govern your use of our donation platform.",
 };
 
 const LAST_UPDATED = "June 27, 2026";
@@ -26,7 +26,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "GlobalGiving is a nonprofit donation facilitation platform that connects donors with vetted nonprofit organizations and community projects. We provide technology infrastructure for fundraising campaigns but are not ourselves a nonprofit and do not directly manage or control the programs funded.",
+        text: "AcaciaGiving is a nonprofit donation facilitation platform that connects donors with vetted nonprofit organizations and community projects. We provide technology infrastructure for fundraising campaigns but are not ourselves a nonprofit and do not directly manage or control the programs funded.",
       },
     ],
   },
@@ -50,7 +50,7 @@ const sections = [
     content: [
       {
         subtitle: "Donation Processing",
-        text: "Donations made through GlobalGiving are subject to manual verification by our team. A donation is considered complete only after payment has been verified and confirmed. We reserve the right to reject or refund donations that cannot be verified.",
+        text: "Donations made through AcaciaGiving are subject to manual verification by our team. A donation is considered complete only after payment has been verified and confirmed. We reserve the right to reject or refund donations that cannot be verified.",
       },
       {
         subtitle: "No Refund Policy",
@@ -58,11 +58,11 @@ const sections = [
       },
       {
         subtitle: "Currency and Fees",
-        text: "Donations are accepted in the currency specified for each payment method. GlobalGiving does not charge platform fees to donors; however, third-party transaction fees (bank transfer fees, mobile money charges) may apply and are the donor's responsibility.",
+        text: "Donations are accepted in the currency specified for each payment method. AcaciaGiving does not charge platform fees to donors; however, third-party transaction fees (bank transfer fees, mobile money charges) may apply and are the donor's responsibility.",
       },
       {
         subtitle: "Tax Deductibility",
-        text: "GlobalGiving does not guarantee the tax-deductibility of any donation. Donors are responsible for consulting their local tax advisors regarding applicable deductions.",
+        text: "AcaciaGiving does not guarantee the tax-deductibility of any donation. Donors are responsible for consulting their local tax advisors regarding applicable deductions.",
       },
       {
         subtitle: "Recurring Donations",
@@ -76,7 +76,7 @@ const sections = [
     content: [
       {
         subtitle: "Vetting",
-        text: "GlobalGiving makes reasonable efforts to vet nonprofit partners for legitimacy. However, we do not guarantee the accuracy of information provided by nonprofits, nor the outcomes of funded projects.",
+        text: "AcaciaGiving makes reasonable efforts to vet nonprofit partners for legitimacy. However, we do not guarantee the accuracy of information provided by nonprofits, nor the outcomes of funded projects.",
       },
       {
         subtitle: "Accountability",
@@ -84,7 +84,7 @@ const sections = [
       },
       {
         subtitle: "Independent Operations",
-        text: "Nonprofits listed on GlobalGiving operate independently. GlobalGiving is not liable for the actions, decisions, or outcomes of any nonprofit organization on the platform.",
+        text: "Nonprofits listed on AcaciaGiving operate independently. AcaciaGiving is not liable for the actions, decisions, or outcomes of any nonprofit organization on the platform.",
       },
     ],
   },
@@ -104,11 +104,11 @@ const sections = [
     content: [
       {
         subtitle: "Our Content",
-        text: "All content on GlobalGiving, including logos, text, graphics, and software, is the property of GlobalGiving or its licensors and is protected by applicable intellectual property laws. You may not reproduce or distribute our content without written permission.",
+        text: "All content on AcaciaGiving, including logos, text, graphics, and software, is the property of AcaciaGiving or its licensors and is protected by applicable intellectual property laws. You may not reproduce or distribute our content without written permission.",
       },
       {
         subtitle: "Your Content",
-        text: "By submitting content (such as comments or donation messages), you grant GlobalGiving a non-exclusive, royalty-free license to use, display, and distribute that content in connection with our services.",
+        text: "By submitting content (such as comments or donation messages), you grant AcaciaGiving a non-exclusive, royalty-free license to use, display, and distribute that content in connection with our services.",
       },
     ],
   },
@@ -118,11 +118,11 @@ const sections = [
     content: [
       {
         subtitle: "As-Is Basis",
-        text: "The platform is provided on an \"as is\" and \"as available\" basis without warranties of any kind, express or implied. GlobalGiving does not warrant that the service will be uninterrupted, error-free, or free of viruses.",
+        text: "The platform is provided on an \"as is\" and \"as available\" basis without warranties of any kind, express or implied. AcaciaGiving does not warrant that the service will be uninterrupted, error-free, or free of viruses.",
       },
       {
         subtitle: "Third-Party Links",
-        text: "Our platform may contain links to third-party websites. GlobalGiving is not responsible for the content, privacy practices, or availability of those sites.",
+        text: "Our platform may contain links to third-party websites. AcaciaGiving is not responsible for the content, privacy practices, or availability of those sites.",
       },
     ],
   },
@@ -132,7 +132,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "To the maximum extent permitted by law, GlobalGiving and its officers, employees, and partners shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the platform, including but not limited to loss of data, loss of donations, or project outcomes — even if we have been advised of the possibility of such damages.",
+        text: "To the maximum extent permitted by law, AcaciaGiving and its officers, employees, and partners shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the platform, including but not limited to loss of data, loss of donations, or project outcomes — even if we have been advised of the possibility of such damages.",
       },
     ],
   },
@@ -142,7 +142,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "You agree to indemnify and hold harmless GlobalGiving, its affiliates, officers, agents, and employees from any claims, damages, losses, or expenses (including legal fees) arising from your use of the platform, violation of these Terms, or infringement of any third-party rights.",
+        text: "You agree to indemnify and hold harmless AcaciaGiving, its affiliates, officers, agents, and employees from any claims, damages, losses, or expenses (including legal fees) arising from your use of the platform, violation of these Terms, or infringement of any third-party rights.",
       },
     ],
   },
@@ -162,7 +162,7 @@ const sections = [
     content: [
       {
         subtitle: "",
-        text: "These Terms shall be governed by and construed in accordance with the applicable laws of the jurisdiction in which GlobalGiving operates. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the competent courts in that jurisdiction.",
+        text: "These Terms shall be governed by and construed in accordance with the applicable laws of the jurisdiction in which AcaciaGiving operates. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the competent courts in that jurisdiction.",
       },
     ],
   },
@@ -191,7 +191,7 @@ export default function TermsPage() {
             Terms of Service
           </h1>
           <p className="text-lg text-white/70 max-w-2xl">
-            Please read these terms carefully before using the GlobalGiving platform.
+            Please read these terms carefully before using the AcaciaGiving platform.
           </p>
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-white/50">
             <span>Effective: {EFFECTIVE_DATE}</span>

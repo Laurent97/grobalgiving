@@ -74,7 +74,7 @@ export default function Navigation() {
                 <Heart className="w-4 h-4 fill-white text-white" />
               </span>
               <span className="text-lg font-bold text-[#3E4B59]" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
-                GlobalGiving
+                AcaciaGiving
               </span>
             </Link>
 
