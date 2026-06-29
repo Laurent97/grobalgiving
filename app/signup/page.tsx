@@ -16,9 +16,9 @@ function pwStrength(pw: string): { score: number; label: string; color: string }
   const map = [
     { label: '',         color: '#e5e7eb' },
     { label: 'Weak',     color: '#ef4444' },
-    { label: 'Fair',     color: '#F9A825' },
-    { label: 'Good',     color: '#2E7D32' },
-    { label: 'Strong',   color: '#1B2E1B' },
+    { label: 'Fair',     color: '#F08B1D' },
+    { label: 'Good',     color: '#3E4B59' },
+    { label: 'Strong',   color: '#2a3440' },
   ]
   return { score, ...map[score] }
 }
@@ -72,25 +72,25 @@ function SignupPageContent() {
   }
 
   const inputCls = "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
-  const ringStyle = { '--tw-ring-color': '#2E7D32' } as React.CSSProperties
+  const ringStyle = { '--tw-ring-color': '#F08B1D' } as React.CSSProperties
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#F5F0E8' }}>
+    <div className="min-h-screen flex" style={{ background: '#f8f9fa' }}>
 
       {/* ── Left panel ── */}
       <div
         className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 text-white"
-        style={{ background: 'linear-gradient(160deg, #1B2E1B 0%, #2E7D32 60%, #388E3C 100%)' }}
+        style={{ background: 'linear-gradient(160deg, #2a3440 0%, #3E4B59 55%, #4a5a6a 100%)' }}
       >
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#F9A825' }}>
+          <span className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#F08B1D' }}>
             <Heart className="w-5 h-5 fill-white text-white" />
           </span>
           <span className="font-bold text-xl" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
         </Link>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#F9A825' }}>
+          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#F08B1D' }}>
             Rooted in Giving
           </p>
           <h2 className="text-4xl font-bold leading-snug mb-6" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
@@ -109,7 +109,7 @@ function SignupPageContent() {
             'Secure, verified donation process',
           ].map(item => (
             <li key={item} className="flex items-center gap-3 text-sm text-white/80">
-              <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: '#F9A825' }}>
+              <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: '#F08B1D' }}>
                 <CheckCircle2 className="w-3 h-3 text-white" />
               </span>
               {item}
@@ -124,13 +124,13 @@ function SignupPageContent() {
 
           {/* Mobile logo */}
           <Link href="/" className="flex lg:hidden items-center gap-2 mb-8 justify-center">
-            <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#2E7D32' }}>
+            <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#F08B1D' }}>
               <Heart className="w-4 h-4 fill-white text-white" />
             </span>
-            <span className="font-bold text-lg text-[#1B2E1B]" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
+            <span className="font-bold text-lg text-[#3E4B59]" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
           </Link>
 
-          <h1 className="text-3xl font-bold text-[#1B2E1B] mb-1" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+          <h1 className="text-3xl font-bold text-[#3E4B59] mb-1" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
             Create your account
           </h1>
           <p className="text-gray-500 text-sm mb-8">
@@ -156,7 +156,7 @@ function SignupPageContent() {
           <form onSubmit={handleSignup} className="space-y-5" noValidate>
             {/* Full name */}
             <div>
-              <label htmlFor="fullName" className="block text-sm font-semibold text-[#1B2E1B] mb-1.5">
+              <label htmlFor="fullName" className="block text-sm font-semibold text-[#3E4B59] mb-1.5">
                 Full name
               </label>
               <input
@@ -174,7 +174,7 @@ function SignupPageContent() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-[#1B2E1B] mb-1.5">
+              <label htmlFor="email" className="block text-sm font-semibold text-[#3E4B59] mb-1.5">
                 Email address
               </label>
               <input
@@ -192,7 +192,7 @@ function SignupPageContent() {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-[#1B2E1B] mb-1.5">
+              <label htmlFor="password" className="block text-sm font-semibold text-[#3E4B59] mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -238,7 +238,7 @@ function SignupPageContent() {
 
             {/* Confirm password */}
             <div>
-              <label htmlFor="confirm" className="block text-sm font-semibold text-[#1B2E1B] mb-1.5">
+              <label htmlFor="confirm" className="block text-sm font-semibold text-[#3E4B59] mb-1.5">
                 Confirm password
               </label>
               <div className="relative">
@@ -280,7 +280,7 @@ function SignupPageContent() {
               type="submit"
               disabled={loading || success}
               className="w-full flex items-center justify-center gap-2 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
-              style={{ background: '#2E7D32' }}
+              style={{ background: '#F08B1D' }}
             >
               {loading
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating account…</>
@@ -293,7 +293,7 @@ function SignupPageContent() {
             <Link
               href={andthen ? `/login?andthen=${encodeURIComponent(andthen)}` : '/login'}
               className="font-semibold hover:underline"
-              style={{ color: '#2E7D32' }}
+              style={{ color: '#F08B1D' }}
             >
               Sign in
             </Link>
@@ -307,8 +307,8 @@ function SignupPageContent() {
 export default function SignupPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F5F0E8' }}>
-        <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#2E7D32' }} />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#f8f9fa' }}>
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#F08B1D' }} />
       </div>
     }>
       <SignupPageContent />

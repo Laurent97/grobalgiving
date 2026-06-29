@@ -28,22 +28,22 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#F5F0E8' }}>
+    <div className="min-h-screen flex" style={{ background: '#f8f9fa' }}>
 
       {/* ── Left panel ── */}
       <div
         className="hidden lg:flex lg:w-5/12 flex-col justify-between p-12 text-white"
-        style={{ background: 'linear-gradient(160deg, #1B2E1B 0%, #2E7D32 60%, #388E3C 100%)' }}
+        style={{ background: 'linear-gradient(160deg, #2a3440 0%, #3E4B59 55%, #4a5a6a 100%)' }}
       >
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#F9A825' }}>
+          <span className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#F08B1D' }}>
             <Heart className="w-5 h-5 fill-white text-white" />
           </span>
           <span className="font-bold text-xl" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
         </Link>
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#F9A825' }}>
+          <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: '#F08B1D' }}>
             Rooted in Giving
           </p>
           <h2 className="text-4xl font-bold leading-snug mb-6" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
@@ -68,20 +68,20 @@ export default function ForgotPasswordPage() {
 
           {/* Mobile logo */}
           <Link href="/" className="flex lg:hidden items-center gap-2 mb-8 justify-center">
-            <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#2E7D32' }}>
+            <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#F08B1D' }}>
               <Heart className="w-4 h-4 fill-white text-white" />
             </span>
-            <span className="font-bold text-lg text-[#1B2E1B]" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
+            <span className="font-bold text-lg text-[#3E4B59]" style={{ fontFamily: 'Aleo, Georgia, serif' }}>AcaciaGiving</span>
           </Link>
 
           {!sent ? (
             <>
               {/* Icon */}
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ background: '#2E7D32' }}>
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ background: '#3E4B59' }}>
                 <Mail className="w-7 h-7 text-white" />
               </div>
 
-              <h1 className="text-3xl font-bold text-[#1B2E1B] mb-1" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+              <h1 className="text-3xl font-bold text-[#3E4B59] mb-1" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
                 Forgot your password?
               </h1>
               <p className="text-gray-500 text-sm mb-8">
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
 
               <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-[#1B2E1B] mb-1.5">
+                  <label htmlFor="email" className="block text-sm font-semibold text-[#3E4B59] mb-1.5">
                     Email address
                   </label>
                   <input
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                     onChange={e => setEmail(e.target.value)}
                     required
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
-                    style={{ '--tw-ring-color': '#2E7D32' } as React.CSSProperties}
+                    style={{ '--tw-ring-color': '#F08B1D' } as React.CSSProperties}
                   />
                 </div>
 
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
                   type="submit"
                   disabled={loading}
                   className="w-full flex items-center justify-center gap-2 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
-                  style={{ background: '#2E7D32' }}
+                  style={{ background: '#F08B1D' }}
                 >
                   {loading
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
@@ -129,22 +129,22 @@ export default function ForgotPasswordPage() {
           ) : (
             /* ── Success state ── */
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: '#dcfce7' }}>
-                <CheckCircle2 className="w-8 h-8" style={{ color: '#2E7D32' }} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: '#FEF3C7' }}>
+                <CheckCircle2 className="w-8 h-8" style={{ color: '#F08B1D' }} />
               </div>
-              <h1 className="text-2xl font-bold text-[#1B2E1B] mb-3" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
+              <h1 className="text-2xl font-bold text-[#3E4B59] mb-3" style={{ fontFamily: 'Aleo, Georgia, serif' }}>
                 Check your inbox
               </h1>
               <p className="text-gray-500 text-sm mb-2">
                 We&apos;ve sent a password reset link to
               </p>
-              <p className="font-semibold text-[#1B2E1B] text-sm mb-8 break-all">{email}</p>
+              <p className="font-semibold text-[#3E4B59] text-sm mb-8 break-all">{email}</p>
               <p className="text-xs text-gray-400 mb-8">
                 Didn&apos;t receive it? Check your spam folder, or{' '}
                 <button
                   onClick={() => { setSent(false); setEmail('') }}
                   className="underline hover:text-gray-600 transition"
-                  style={{ color: '#2E7D32' }}
+                  style={{ color: '#F08B1D' }}
                 >
                   try a different email
                 </button>.
@@ -155,7 +155,7 @@ export default function ForgotPasswordPage() {
           <Link
             href="/login"
             className="flex items-center justify-center gap-2 text-sm font-medium mt-4 hover:underline transition"
-            style={{ color: '#795548' }}
+            style={{ color: '#3E4B59' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Sign in
