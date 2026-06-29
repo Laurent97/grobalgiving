@@ -313,12 +313,12 @@ export async function PUT(req: Request) {
     if (updateData.main_image_url !== undefined) update.main_image_url = updateData.main_image_url
     if (updateData.gallery_images !== undefined) update.gallery_images = updateData.gallery_images
     if (updateData.video_url !== undefined) update.video_url = updateData.video_url
-    if (updateData.start_date !== undefined) update.start_date = updateData.start_date
-    if (updateData.end_date !== undefined) update.end_date = updateData.end_date
+    if (updateData.start_date !== undefined) update.start_date = updateData.start_date || null
+    if (updateData.end_date !== undefined) update.end_date = updateData.end_date || null
     if (updateData.category !== undefined) update.category = updateData.category
     if (updateData.tags !== undefined) update.tags = updateData.tags
     if (updateData.terms_accepted !== undefined) update.terms_accepted = updateData.terms_accepted
-    if (updateData.is_ongoing !== undefined) update.end_date = updateData.is_ongoing ? null : updateData.end_date
+    if (updateData.is_ongoing !== undefined) update.end_date = updateData.is_ongoing ? null : (updateData.end_date || null)
 
     if (updateData.project_details || updateData.organization || updateData.sub_category || updateData.project_leader || updateData.team_members || updateData.budget || updateData.timeline || updateData.impact_metrics || updateData.documents || updateData.seo || updateData.notifications) {
       update.project_details = {
