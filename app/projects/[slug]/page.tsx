@@ -52,6 +52,7 @@ export default function ProjectPage() {
   const [copied, setCopied] = useState(false)
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
   const [stickyVisible, setStickyVisible] = useState(false)
+  const [relatedProjects, setRelatedProjects] = useState<any[]>([])
   const heroRef = useRef<HTMLDivElement>(null)
   const supabase = useSupabase()
   const { addItem } = useCartStore()
@@ -77,6 +78,18 @@ export default function ProjectPage() {
         if (user && data) {
           const { data: fav } = await supabase.from('favorites').select('project_id').eq('user_id', user.id).eq('project_id', data.id).limit(1)
           setIsFavorited(Array.isArray(fav) && fav.length > 0)
+        }
+        // Fetch related projects (same category, exclude current)
+        if (data) {
+          const { data: related } = await supabase
+            .from('projects')
+            .select('id, title, slug, main_image_url, goal_amount, amount_received, category')
+            .eq('status', 'active')
+            .eq('is_visible', true)
+            .eq('category', data.category)
+            .neq('id', data.id)
+            .limit(3)
+          setRelatedProjects(related || [])
         }
       } catch (err) {
         console.error('Error fetching project:', err)
@@ -685,6 +698,43 @@ export default function ProjectPage() {
               <div className="pt-4 border-t border-gray-100 text-sm text-gray-500">
                 <p className="font-medium text-gray-700 mb-0.5">{org.name || p.nonprofits?.name}</p>
                 {org.website && <a href={org.website} target="_blank" rel="noreferrer" className="text-xs flex items-center gap-1 hover:underline" style={{ color: C.primary }}><ExternalLink size={11} /> Visit website</a>}
+              </div>
+            )}
+
+            {/* Related projects */}
+            {relatedProjects.length > 0 && (
+              <div className="pt-4 border-t border-gray-100">
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Related Projects</p>
+                <div className="space-y-3">
+                  {relatedProjects.map(rp => {
+                    const rpRaised = rp.amount_received ?? 0
+                    const rpPct = rp.goal_amount > 0 ? Math.min((rpRaised / rp.goal_amount) * 100, 100) : 0
+                    return (
+                      <Link
+                        key={rp.id}
+                        href={`/projects/${rp.slug}`}
+                        className="flex items-center gap-3 group rounded-xl p-2 -mx-2 hover:bg-gray-50 transition"
+                      >
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100">
+                          {rp.main_image_url
+                            ? <Image src={rp.main_image_url} alt={rp.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="48px" />
+                            : <div className="w-full h-full flex items-center justify-center text-gray-300 text-lg font-bold">{rp.title.charAt(0)}</div>
+                          }
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 group-hover:text-[#F08B1D] transition-colors line-clamp-2 leading-snug">{rp.title}</p>
+                          <div className="mt-1.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${rpPct}%`, background: C.primary }} />
+                          </div>
+                          <p className="text-xs text-gray-400 mt-0.5">{Math.round(rpPct)}% funded</p>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+                <Link href="/" className="mt-3 flex items-center justify-center gap-1 text-xs font-medium hover:underline" style={{ color: C.primary }}>
+                  Browse all projects
+                </Link>
               </div>
             )}
           </div>
