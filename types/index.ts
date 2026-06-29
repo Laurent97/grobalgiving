@@ -47,8 +47,6 @@ export type Donation = {
   amount: number
   currency: string
   frequency: 'once' | 'monthly'
-  stripe_session_id?: string
-  stripe_subscription_id?: string
   status: 'pending' | 'completed' | 'failed' | 'verified' | 'rejected'
   payment_method_type?: 'bank' | 'mobile_money' | 'crypto' | 'card'
   payment_method_id?: string
@@ -110,13 +108,6 @@ export type CartItem = {
   projectTitle: string
   amount: number
   frequency: 'once' | 'monthly'
-}
-
-// Stripe Session Metadata
-export type CheckoutMetadata = {
-  projectIds: string[]
-  amounts: number[]
-  frequencies: ('once' | 'monthly')[]
 }
 
 // Payment Method Types
