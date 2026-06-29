@@ -8,7 +8,7 @@ import {
   Heart, Share2, Copy, ShoppingCart, MapPin, Calendar, Tag, Users,
   Globe, Mail, Phone, CheckCircle, Clock, AlertCircle,
   Play, X, ExternalLink, FileText, Building2, Target, TrendingUp,
-  ArrowLeft
+  ArrowLeft, ChevronLeft, ChevronRight, ZoomIn
 } from 'lucide-react'
 import { useSupabase } from '@/hooks/useSupabase'
 import { useCartStore } from '@/stores/cartStore'
@@ -50,7 +50,7 @@ export default function ProjectPage() {
   const [isFavorited, setIsFavorited] = useState(false)
   const [activeTab, setActiveTab] = useState<'story' | 'impact' | 'updates' | 'gallery'>('story')
   const [copied, setCopied] = useState(false)
-  const [lightbox, setLightbox] = useState<string | null>(null)
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
   const [stickyVisible, setStickyVisible] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
   const supabase = useSupabase()
@@ -125,7 +125,8 @@ export default function ProjectPage() {
   const leader          = p.project_leader || {}
   const budget: any[]   = p.budget || []
   const impact          = p.impact_metrics || {}
-  const gallery: string[] = p.gallery_images || []
+  const gallery: string[] = Array.isArray(project.gallery_images) ? project.gallery_images.filter(Boolean) : (Array.isArray(p.gallery_images) ? p.gallery_images.filter(Boolean) : [])
+  const allMedia: string[] = [project.main_image_url, ...gallery].filter(Boolean)
   const documents: any[]  = p.documents || []
   const tags: string[]    = p.tags || []
   const dl = daysLeft(p.end_date)
@@ -322,7 +323,7 @@ export default function ProjectPage() {
                 { key: 'story',   label: 'About' },
                 { key: 'impact',  label: 'Impact & Budget' },
                 { key: 'updates', label: 'Updates' },
-                { key: 'gallery', label: `Gallery${gallery.length ? ` (${gallery.length + 1})` : ''}` },
+                { key: 'gallery', label: `Gallery (${allMedia.length})` },
               ] as const).map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
                   className={`px-5 py-4 text-sm font-semibold whitespace-nowrap transition border-b-2 ${activeTab === t.key ? 'border-b-2' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
@@ -547,16 +548,45 @@ export default function ProjectPage() {
               {/* ── Gallery tab ─────────────────────────────── */}
               {activeTab === 'gallery' && (
                 <div>
-                  {[project.main_image_url, ...gallery].length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {[project.main_image_url, ...gallery].map((img, i) => (
-                        <button key={i} onClick={() => setLightbox(img)}
-                          className="relative rounded-xl overflow-hidden aspect-square group focus:outline-none focus:ring-2"
-                          style={{ '--tw-ring-color': C.primary } as React.CSSProperties}>
-                          <Image src={img} alt={`Gallery ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width:640px) 50vw, 33vw" />
-                        </button>
-                      ))}
-                    </div>
+                  {allMedia.length > 0 ? (
+                    <>
+                      {/* Hero image (first/cover) */}
+                      <button
+                        onClick={() => setLightboxIdx(0)}
+                        className="relative w-full rounded-2xl overflow-hidden mb-3 group focus:outline-none"
+                        style={{ height: 'clamp(220px,40vw,420px)' }}
+                      >
+                        <Image src={allMedia[0]} alt="Cover photo" fill className="object-cover group-hover:scale-[1.02] transition-transform duration-500" sizes="100vw" priority />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-white text-sm px-4 py-2 rounded-full flex items-center gap-2">
+                            <ZoomIn size={15} /> View full size
+                          </span>
+                        </div>
+                        <span className="absolute top-3 left-3 bg-black/50 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">Cover photo</span>
+                      </button>
+
+                      {/* Grid of remaining images */}
+                      {allMedia.length > 1 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {allMedia.slice(1).map((img, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setLightboxIdx(i + 1)}
+                              className="relative rounded-xl overflow-hidden aspect-square group focus:outline-none focus:ring-2"
+                              style={{ '--tw-ring-color': C.primary } as React.CSSProperties}
+                            >
+                              <Image src={img} alt={`Photo ${i + 2}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width:640px) 50vw, 33vw" />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200 flex items-center justify-center">
+                                <ZoomIn size={20} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              <span className="absolute bottom-1.5 right-1.5 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded backdrop-blur-sm">{i + 2}/{allMedia.length}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      <p className="text-xs text-gray-400 mt-3 text-center">{allMedia.length} photo{allMedia.length !== 1 ? 's' : ''} · Click any image to enlarge</p>
+                    </>
                   ) : (
                     <div className="text-center py-12">
                       <p className="text-gray-400 text-sm">No gallery images yet.</p>
@@ -661,14 +691,83 @@ export default function ProjectPage() {
       </div>
 
       {/* ── Lightbox ─────────────────────────────────────────── */}
-      {lightbox && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
-          <button className="absolute top-4 right-4 text-white/70 hover:text-white transition" onClick={() => setLightbox(null)}>
-            <X size={28} />
+      {lightboxIdx !== null && allMedia.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          onClick={() => setLightboxIdx(null)}
+          onKeyDown={e => {
+            if (e.key === 'Escape') setLightboxIdx(null)
+            if (e.key === 'ArrowLeft')  setLightboxIdx(i => i !== null && i > 0 ? i - 1 : allMedia.length - 1)
+            if (e.key === 'ArrowRight') setLightboxIdx(i => i !== null && i < allMedia.length - 1 ? i + 1 : 0)
+          }}
+          tabIndex={0}
+          role="dialog"
+          aria-label="Image viewer"
+        >
+          {/* Close */}
+          <button
+            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition"
+            onClick={() => setLightboxIdx(null)}
+            aria-label="Close"
+          >
+            <X size={20} />
           </button>
-          <div className="relative max-w-5xl w-full" style={{ maxHeight: '90vh' }} onClick={e => e.stopPropagation()}>
-            <Image src={lightbox} alt="Gallery" width={1200} height={800} className="object-contain w-full h-full rounded-xl" style={{ maxHeight: '85vh' }} />
+
+          {/* Counter */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white text-sm px-4 py-1.5 rounded-full backdrop-blur-sm">
+            {lightboxIdx + 1} / {allMedia.length}
           </div>
+
+          {/* Prev */}
+          {allMedia.length > 1 && (
+            <button
+              className="absolute left-3 md:left-6 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition"
+              onClick={e => { e.stopPropagation(); setLightboxIdx(i => i !== null && i > 0 ? i - 1 : allMedia.length - 1) }}
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+
+          {/* Image */}
+          <div className="relative w-full h-full flex items-center justify-center p-14" onClick={e => e.stopPropagation()}>
+            <div className="relative" style={{ maxWidth: '90vw', maxHeight: '85vh', width: '100%', height: '100%' }}>
+              <Image
+                src={allMedia[lightboxIdx]}
+                alt={`Photo ${lightboxIdx + 1}`}
+                fill
+                className="object-contain"
+                sizes="90vw"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Next */}
+          {allMedia.length > 1 && (
+            <button
+              className="absolute right-3 md:right-6 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition"
+              onClick={e => { e.stopPropagation(); setLightboxIdx(i => i !== null && i < allMedia.length - 1 ? i + 1 : 0) }}
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
+
+          {/* Thumbnail strip */}
+          {allMedia.length > 1 && (
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto">
+              {allMedia.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={e => { e.stopPropagation(); setLightboxIdx(i) }}
+                  className={`relative shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${i === lightboxIdx ? 'border-[#F08B1D] scale-110' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                >
+                  <Image src={img} alt={`Thumb ${i + 1}`} fill className="object-cover" sizes="48px" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </main>

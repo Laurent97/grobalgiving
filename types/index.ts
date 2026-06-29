@@ -24,6 +24,7 @@ export type Project = {
   category: 'Education' | 'Physical Health' | 'Child Protection' | 'Economic Opportunity' | 'Water & Sanitation' | 'disaster' | string
   status: 'pending' | 'active' | 'completed' | 'rejected'
   main_image_url: string
+  gallery_images?: string[]
   created_at: string
   start_date?: string
   end_date?: string
