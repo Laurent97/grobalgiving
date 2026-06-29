@@ -112,12 +112,12 @@ function HeroSlideshow() {
   useEffect(() => {
     fetch('/api/hero-media')
       .then(r => r.ok ? r.json() : { slides: [] })
-      .then(({ slides }: { slides: { url: string; alt: string }[] }) => {
+      .then(({ slides }: { slides: { url: string; alt: string; type?: string }[] }) => {
         if (!Array.isArray(slides) || slides.length === 0) return
-        // Convert DB slides to our Slide type (images only)
+        // Convert DB slides — preserve video type for direct MP4s
         const dbSlides: Slide[] = slides.map((s, i) => ({
           id: 1000 + i,
-          type: 'image' as const,
+          type: s.type === 'video' ? 'video' as const : 'image' as const,
           src: s.url,
           alt: s.alt,
         }))
