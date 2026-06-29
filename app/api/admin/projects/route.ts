@@ -117,12 +117,14 @@ export async function POST(req: Request) {
       project_details
     } = body
 
-    if (!title || !slug || !description || !goal_amount || !nonprofit_id) {
+    const effectiveDescription = description || project_summary || ''
+
+    if (!title || !slug || !effectiveDescription || !goal_amount || !nonprofit_id) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    if (!main_image_url || !Array.isArray(gallery_images) || gallery_images.length < 2) {
-      return NextResponse.json({ error: 'At least 3 images are required' }, { status: 400 })
+    if (!main_image_url) {
+      return NextResponse.json({ error: 'At least one project image is required' }, { status: 400 })
     }
 
     if (visibility === 'published' && !terms_accepted) {
@@ -206,7 +208,7 @@ export async function POST(req: Request) {
       nonprofit_id: effectiveNonprofitId,
       title,
       slug,
-      description,
+      description: effectiveDescription,
       subtitle: subtitle || null,
       project_summary: project_summary || null,
       challenge: challenge || null,
