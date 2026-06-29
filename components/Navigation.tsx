@@ -45,7 +45,8 @@ export default function Navigation() {
   }
 
   const navLinks = [
-    { href: '/', label: 'Projects' },
+    { href: '/', label: 'Home' },
+    { href: '/causes', label: 'Causes' },
     { href: '/about', label: 'About' },
     { href: '/impact', label: 'Impact' },
     { href: '/contact', label: 'Contact' },

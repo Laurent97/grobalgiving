@@ -333,13 +333,13 @@ export default function Hero({ stats }: { stats?: HeroStats }) {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
           <Link
-            href="/#all-projects"
+            href="/causes"
             className="inline-flex items-center justify-center gap-2 bg-[#F08B1D] hover:bg-[#D97B1A] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 text-base"
           >
             Browse All Projects
           </Link>
           <Link
-            href="/?category=disaster#all-projects"
+            href="/causes?urgent=1"
             className="inline-flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 border border-white/35 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 backdrop-blur-sm text-base hover:-translate-y-0.5"
           >
             View Urgent Causes
@@ -352,7 +352,7 @@ export default function Hero({ stats }: { stats?: HeroStats }) {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => router.push(`/?category=${cat.id}#all-projects`)}
+              onClick={() => router.push(`/causes?category=${cat.id}`)}
               className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#F08B1D]/70 text-white/85 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 backdrop-blur-sm"
             >
               <span>{cat.icon}</span>

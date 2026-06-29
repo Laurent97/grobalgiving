@@ -71,7 +71,7 @@ export default function CategoryGrid() {
   }, [])
 
   const handleCategoryClick = (categorySlug: string) => {
-    router.push(`/?category=${categorySlug}#all-projects`)
+    router.push(`/causes?category=${categorySlug}`)
   }
 
   if (loading) {
