@@ -116,7 +116,8 @@ export default function ProjectPage() {
   }
 
   // ── Derived data ─────────────────────────────────────────────
-  const pct      = Math.min((project.current_amount / project.goal_amount) * 100, 100)
+  const raisedAmount = project.amount_received ?? project.current_amount ?? 0
+  const pct      = Math.min((raisedAmount / project.goal_amount) * 100, 100)
   const p        = project as any   // typed loosely to access rich fields
   const org      = p.organization   || p.nonprofits || p.nonprofit || {}
   const details  = p.project_details || {}
@@ -180,7 +181,7 @@ export default function ProjectPage() {
           <>
             <div className="mb-2">
               <div className="flex justify-between text-sm mb-1">
-                <span className="font-semibold" style={{ color: C.dark }}>${project.current_amount.toLocaleString()} raised</span>
+                <span className="font-semibold" style={{ color: C.dark }}>${raisedAmount.toLocaleString()} raised</span>
                 <span className="text-gray-500">{Math.round(pct)}%</span>
               </div>
               <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
@@ -287,7 +288,7 @@ export default function ProjectPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
               {[
-                { label: 'Raised',  value: fmt(project.current_amount) },
+                { label: 'Raised',  value: fmt(raisedAmount) },
                 { label: 'Goal',    value: fmt(project.goal_amount) },
                 { label: 'Donors',  value: (project.donor_count ?? p.donors_count ?? '—').toString() },
                 { label: 'Days left', value: dl !== null ? (dl > 0 ? `${dl}` : '0') : (p.is_ongoing ? '∞' : '—') },
