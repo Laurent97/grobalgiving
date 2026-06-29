@@ -88,7 +88,7 @@ export default function ProjectPage() {
             .eq('is_visible', true)
             .eq('category', data.category)
             .neq('id', data.id)
-            .limit(3)
+            .order('created_at', { ascending: false })
           setRelatedProjects(related || [])
         }
       } catch (err) {
