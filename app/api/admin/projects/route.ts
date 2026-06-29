@@ -167,16 +167,9 @@ export async function POST(req: Request) {
       effectiveNonprofitId = profile.nonprofit_id
     }
 
-    // Validate goal amount against limit
-    const { data: limitCheck } = await supabase.rpc('validate_goal_amount', { goal_amount: Number(goal_amount) })
-    if (!limitCheck) {
-      return NextResponse.json({ error: 'Goal amount exceeds maximum limit' }, { status: 400 })
-    }
-
-    // Check daily project limit
-    const { data: dailyCheck } = await supabase.rpc('check_daily_project_limit', { user_id: user.id })
-    if (!dailyCheck) {
-      return NextResponse.json({ error: 'Daily project creation limit exceeded' }, { status: 400 })
+    // Validate goal amount (max 10,000,000)
+    if (Number(goal_amount) > 10_000_000) {
+      return NextResponse.json({ error: 'Goal amount exceeds maximum limit of $10,000,000' }, { status: 400 })
     }
 
     const isNonprofitAdmin = profile.role === 'nonprofit_admin'
@@ -293,14 +286,9 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // Validate goal amount if being updated
-    if (updateData.goal_amount) {
-      const { data: limitCheck } = await supabase.rpc('validate_goal_amount', { 
-        goal_amount: Number(updateData.goal_amount) 
-      })
-      if (!limitCheck) {
-        return NextResponse.json({ error: 'Goal amount exceeds maximum limit' }, { status: 400 })
-      }
+    // Validate goal amount if being updated (max 10,000,000)
+    if (updateData.goal_amount && Number(updateData.goal_amount) > 10_000_000) {
+      return NextResponse.json({ error: 'Goal amount exceeds maximum limit of $10,000,000' }, { status: 400 })
     }
 
     // Prepare update data
