@@ -8,13 +8,30 @@ export default function Newsletter() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const [error, setError] = useState('')
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.trim()) return
     setLoading(true)
-    await new Promise(r => setTimeout(r, 800))
-    setSubmitted(true)
-    setLoading(false)
+    setError('')
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        setError(data.error || 'Something went wrong')
+      } else {
+        setSubmitted(true)
+      }
+    } catch {
+      setError('Could not connect. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -60,6 +77,9 @@ export default function Newsletter() {
           </form>
         )}
 
+        {error && (
+          <p className="mt-3 text-sm text-red-400">{error}</p>
+        )}
         <p className="mt-4 text-xs text-white/35">
           No spam, ever. Unsubscribe any time. By subscribing you agree to our{' '}
           <a href="/privacy" className="underline hover:text-white/60 transition-colors">Privacy Policy</a>.

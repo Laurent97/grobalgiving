@@ -19,14 +19,17 @@ function useCountUp(target: number, duration = 1800, shouldStart = false) {
   return value
 }
 
-export default function ImpactStats() {
-  const [rawStats, setRawStats] = useState({ totalRaised: 0, projectsFunded: 0, donors: 0, countries: 0 })
+interface ImpactStatsProps {
+  totalRaised?: number
+  donors?: number
+  projectsFunded?: number
+  countries?: number
+}
+
+export default function ImpactStats({ totalRaised = 0, donors = 0, projectsFunded = 0, countries = 0 }: ImpactStatsProps) {
+  const rawStats = { totalRaised, projectsFunded, donors, countries }
   const [inView, setInView] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    fetch('/api/stats').then(r => r.json()).then(d => setRawStats(d)).catch(() => {})
-  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold: 0.3 })
@@ -34,10 +37,10 @@ export default function ImpactStats() {
     return () => observer.disconnect()
   }, [])
 
-  const raised = useCountUp(rawStats.totalRaised, 1800, inView)
-  const donors = useCountUp(rawStats.donors, 1600, inView)
-  const projects = useCountUp(rawStats.projectsFunded, 1400, inView)
-  const countries = useCountUp(rawStats.countries || 45, 1200, inView)
+  const raisedCount = useCountUp(rawStats.totalRaised, 1800, inView)
+  const donorsCount = useCountUp(rawStats.donors, 1600, inView)
+  const projectsCount = useCountUp(rawStats.projectsFunded, 1400, inView)
+  const countriesCount = useCountUp(rawStats.countries || 0, 1200, inView)
 
   const fmt = (n: number) => {
     if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
@@ -46,10 +49,10 @@ export default function ImpactStats() {
   }
 
   const statItems = [
-    { value: fmt(raised), label: 'Total Raised', icon: TrendingUp, color: 'text-[#F08B1D]', bg: 'bg-orange-50' },
-    { value: `${donors.toLocaleString()}+`, label: 'Generous Donors', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { value: `${projects}+`, label: 'Projects Funded', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
-    { value: `${countries}+`, label: 'Countries Reached', icon: Globe, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { value: fmt(raisedCount), label: 'Total Raised', icon: TrendingUp, color: 'text-[#F08B1D]', bg: 'bg-orange-50' },
+    { value: `${donorsCount.toLocaleString()}`, label: 'Donors', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { value: `${projectsCount}`, label: 'Projects Funded', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
+    { value: `${countriesCount}`, label: 'Countries Reached', icon: Globe, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   ]
 
   return (

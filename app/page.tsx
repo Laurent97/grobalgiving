@@ -16,18 +16,21 @@ export const dynamic = 'force-dynamic'
 async function getStats() {
   try {
     const supabase = await createClient()
-    const { data: totalRaised } = await supabase.from('donations').select('amount').eq('status', 'completed')
-    const { count: projectsFunded } = await supabase.from('projects').select('*', { count: 'exact', head: true }).gt('current_amount', 0)
-    const { count: donors } = await supabase.from('donations').select('donor_id', { count: 'exact', head: true }).not('donor_id', 'is', null)
+    const { data: totalRaisedRows } = await supabase.from('donations').select('amount').eq('status', 'completed')
+    const { count: projectsFunded } = await supabase.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'active').gt('amount_received', 0)
+    const { count: donors } = await supabase.from('donations').select('donor_id', { count: 'exact', head: true }).not('donor_id', 'is', null).eq('status', 'completed')
+    const { data: locations } = await supabase.from('projects').select('location_country').eq('status', 'active').not('location_country', 'is', null)
+    const countries = new Set((locations || []).map(p => p.location_country).filter(Boolean)).size
 
     return {
-      totalRaised: totalRaised?.reduce((sum, d) => sum + d.amount, 0) || 0,
+      totalRaised: totalRaisedRows?.reduce((sum, d) => sum + (d.amount || 0), 0) || 0,
       projectsFunded: projectsFunded || 0,
       donors: donors || 0,
+      countries,
     }
   } catch (error) {
     console.error('Error fetching stats:', error)
-    return { totalRaised: 0, projectsFunded: 0, donors: 0 }
+    return { totalRaised: 0, projectsFunded: 0, donors: 0, countries: 0 }
   }
 }
 
@@ -84,7 +87,7 @@ export default async function Home({
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section with Search */}
-      <Hero />
+      <Hero stats={stats} />
 
       {/* Category Grid */}
       <CategoryGrid />
@@ -96,10 +99,15 @@ export default async function Home({
       <UrgentProjects />
 
       {/* Impact Stats & Trust Signals */}
-      <ImpactStats />
+      <ImpactStats
+        totalRaised={stats.totalRaised}
+        donors={stats.donors}
+        projectsFunded={stats.projectsFunded}
+        countries={stats.countries}
+      />
 
       {/* All Projects Section */}
-      <section className="py-16 bg-white">
+      <section id="all-projects" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
