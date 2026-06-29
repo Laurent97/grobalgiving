@@ -100,13 +100,35 @@ function shuffle<T>(arr: T[]): T[] {
 // Slideshow background — pure CSS cross-fade, no framer-motion dependency
 // ---------------------------------------------------------------------------
 function HeroSlideshow() {
-  const [playlist] = useState<Slide[]>(() => shuffle(SLIDES))
+  const [playlist, setPlaylist] = useState<Slide[]>(() => shuffle(SLIDES))
   const [current, setCurrent]   = useState(0)
   const [prev, setPrev]         = useState<number | null>(null)
   const [fading, setFading]     = useState(false)
   const timerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const videoRef  = useRef<HTMLVideoElement>(null)
   const manualRef = useRef(false)
+
+  // Fetch real project media and blend with stock fallbacks
+  useEffect(() => {
+    fetch('/api/hero-media')
+      .then(r => r.ok ? r.json() : { slides: [] })
+      .then(({ slides }: { slides: { url: string; alt: string }[] }) => {
+        if (!Array.isArray(slides) || slides.length === 0) return
+        // Convert DB slides to our Slide type (images only)
+        const dbSlides: Slide[] = slides.map((s, i) => ({
+          id: 1000 + i,
+          type: 'image' as const,
+          src: s.url,
+          alt: s.alt,
+        }))
+        // Interleave: keep stock videos, blend in real images
+        const stockVideos = SLIDES.filter(s => s.type === 'video')
+        const combined = shuffle([...dbSlides, ...stockVideos])
+        setPlaylist(combined)
+        setCurrent(0)
+      })
+      .catch(() => {}) // silently fall back to stock slides
+  }, [])
 
   const advance = useCallback((idx?: number) => {
     setPrev(current)
@@ -210,9 +232,9 @@ function HeroSlideshow() {
         style={{ background: 'linear-gradient(to bottom, transparent, rgba(26,40,32,0.6))' }}
       />
 
-      {/* Dot indicators */}
+      {/* Dot indicators — max 12 visible dots */}
       <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-        {playlist.map((_, i) => (
+        {playlist.slice(0, 12).map((_, i) => (
           <button
             key={i}
             onClick={() => handleDotClick(i)}
