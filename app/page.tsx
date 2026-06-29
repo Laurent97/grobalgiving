@@ -16,18 +16,36 @@ export const dynamic = 'force-dynamic'
 async function getStats() {
   try {
     const supabase = await createClient()
-    const { data: totalRaisedRows } = await supabase.from('donations').select('amount').eq('status', 'completed')
-    const { count: projectsFunded } = await supabase.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'active').gt('amount_received', 0)
-    const { count: donors } = await supabase.from('donations').select('donor_id', { count: 'exact', head: true }).not('donor_id', 'is', null).eq('status', 'completed')
-    const { data: locations } = await supabase.from('projects').select('location_country').eq('status', 'active').not('location_country', 'is', null)
+
+    // Sum amount_received across all active projects — the authoritative raised total
+    const { data: projectAmounts } = await supabase
+      .from('projects')
+      .select('amount_received')
+      .eq('status', 'active')
+
+    const totalRaised = (projectAmounts ?? []).reduce((sum, p) => sum + (p.amount_received || 0), 0)
+
+    const { count: projectsFunded } = await supabase
+      .from('projects')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active')
+      .gt('amount_received', 0)
+
+    // Count unique donors from all donations (any status)
+    const { count: donors } = await supabase
+      .from('donations')
+      .select('donor_id', { count: 'exact', head: true })
+      .not('donor_id', 'is', null)
+
+    const { data: locations } = await supabase
+      .from('projects')
+      .select('location_country')
+      .eq('status', 'active')
+      .not('location_country', 'is', null)
+
     const countries = new Set((locations || []).map(p => p.location_country).filter(Boolean)).size
 
-    return {
-      totalRaised: totalRaisedRows?.reduce((sum, d) => sum + (d.amount || 0), 0) || 0,
-      projectsFunded: projectsFunded || 0,
-      donors: donors || 0,
-      countries,
-    }
+    return { totalRaised, projectsFunded: projectsFunded || 0, donors: donors || 0, countries }
   } catch (error) {
     console.error('Error fetching stats:', error)
     return { totalRaised: 0, projectsFunded: 0, donors: 0, countries: 0 }

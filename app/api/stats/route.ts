@@ -5,43 +5,41 @@ export async function GET(req: Request) {
   try {
     const supabase = await createClient()
 
-    // Get total raised
-    const { data: totalRaised } = await supabase
-      .from('donations')
-      .select('amount')
-      .eq('status', 'completed')
+    // Sum amount_received across all active projects — authoritative raised total
+    const { data: projectAmounts } = await supabase
+      .from('projects')
+      .select('amount_received')
+      .eq('status', 'active')
 
-    // Get projects funded (with donations)
+    const totalRaised = (projectAmounts ?? []).reduce((sum, p) => sum + (p.amount_received || 0), 0)
+
+    // Projects with any funds received
     const { count: projectsFunded } = await supabase
       .from('projects')
       .select('*', { count: 'exact', head: true })
-      .gt('current_amount', 0)
       .eq('status', 'active')
+      .gt('amount_received', 0)
 
-    // Get unique donors
+    // Unique donors across all donations
     const { count: donors } = await supabase
       .from('donations')
       .select('donor_id', { count: 'exact', head: true })
       .not('donor_id', 'is', null)
 
-    // Get unique countries/locations
+    // Unique countries from active projects
     const { data: locations } = await supabase
       .from('projects')
-      .select('location')
+      .select('location_country')
       .eq('status', 'active')
-      .not('location', 'is', null)
+      .not('location_country', 'is', null)
 
-    const uniqueCountries = new Set(
-      (locations || [])
-        .map(p => p.location?.split(',').pop()?.trim())
-        .filter(Boolean)
-    )
+    const countries = new Set((locations || []).map(p => p.location_country).filter(Boolean)).size
 
     return NextResponse.json({
-      totalRaised: totalRaised?.reduce((sum, d) => sum + d.amount, 0) || 0,
+      totalRaised,
       projectsFunded: projectsFunded || 0,
       donors: donors || 0,
-      countries: uniqueCountries.size,
+      countries,
       lastUpdated: new Date().toISOString()
     })
   } catch (err: any) {
