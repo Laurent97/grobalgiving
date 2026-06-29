@@ -130,10 +130,9 @@ export default async function Home({
           {/* Projects Grid */}
           {projects && projects.length > 0 ? (
             <>
-              <div className="mb-4">
-                <p className="text-gray-600">
-                  Showing <strong>{(page - 1) * pageSize + 1}</strong> to{' '}
-                  <strong>{Math.min(page * pageSize, count || 0)}</strong> of <strong>{count || 0}</strong> projects
+              <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                <p className="text-sm sm:text-base text-gray-600">
+                  Showing <strong>{(page - 1) * pageSize + 1}</strong>–<strong>{Math.min(page * pageSize, count || 0)}</strong> of <strong>{count || 0}</strong> projects
                 </p>
               </div>
 
