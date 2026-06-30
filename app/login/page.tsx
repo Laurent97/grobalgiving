@@ -31,13 +31,20 @@ function LoginPageContent() {
         const { data: userData } = await supabase.auth.getUser()
         const user = userData?.user
         if (user) {
-          const { data: existing } = await supabase.from('profiles').select('id').eq('id', user.id).single()
+          const { data: existing } = await supabase.from('profiles').select('id, role').eq('id', user.id).single()
           if (!existing) {
             await supabase.from('profiles').insert({ id: user.id, role: 'donor' })
           }
+
+          const adminRoles = ['admin', 'nonprofit_admin']
+          const isAdmin = existing && adminRoles.includes(existing.role)
+          const redirectTo = andthen && andthen !== '/' ? andthen : isAdmin ? '/admin' : '/'
+          router.push(redirectTo)
+          router.refresh()
+          return
         }
       } catch (e) {
-        console.warn('Could not ensure profile on login', e)
+        console.warn('Could not determine role on login', e)
       }
       router.push(andthen)
       router.refresh()
