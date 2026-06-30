@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Aleo, Open_Sans } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { ToastProvider } from "@/components/Toast";
 
 const aleo = Aleo({
@@ -98,9 +96,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ToastProvider>
-          <Navigation />
           {children}
-          <Footer />
         </ToastProvider>
       </body>
     </html>
