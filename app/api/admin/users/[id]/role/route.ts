@@ -23,6 +23,10 @@ export async function PUT(
     }
 
     const admin = createAdminClient()
+    if (!admin) {
+      return NextResponse.json({ error: 'Admin client not configured. Add SUPABASE_SERVICE_ROLE_KEY.' }, { status: 503 })
+    }
+
     const { data: profile, error } = await admin
       .from('profiles')
       .update({ role })

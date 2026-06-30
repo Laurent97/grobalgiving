@@ -24,6 +24,10 @@ export async function PUT(
     }
 
     const admin = createAdminClient()
+    if (!admin) {
+      return NextResponse.json({ error: 'Admin client not configured. Add SUPABASE_SERVICE_ROLE_KEY.' }, { status: 503 })
+    }
+
     const updateData: Record<string, any> = {}
     if (full_name !== undefined) updateData.full_name = full_name
     if (role !== undefined) updateData.role = role
@@ -59,6 +63,9 @@ export async function DELETE(
     }
 
     const admin = createAdminClient()
+    if (!admin) {
+      return NextResponse.json({ error: 'Admin client not configured. Add SUPABASE_SERVICE_ROLE_KEY.' }, { status: 503 })
+    }
 
     // 1. Remove or nullify FK references so the profile can be deleted
     await admin.from('donations').update({ donor_id: null }).eq('donor_id', id)

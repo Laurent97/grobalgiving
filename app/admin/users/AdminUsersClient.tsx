@@ -23,6 +23,7 @@ interface Profile {
 interface AdminUsersClientProps {
   profiles: Profile[]
   nonprofits: Nonprofit[]
+  missingServiceKey?: boolean
 }
 
 const roleConfig = {
@@ -43,7 +44,7 @@ const roleConfig = {
   }
 }
 
-export default function AdminUsersClient({ profiles: initialProfiles, nonprofits }: AdminUsersClientProps) {
+export default function AdminUsersClient({ profiles: initialProfiles, nonprofits, missingServiceKey }: AdminUsersClientProps) {
   const [profiles, setProfiles] = useState<Profile[]>(initialProfiles)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
@@ -228,6 +229,18 @@ export default function AdminUsersClient({ profiles: initialProfiles, nonprofits
         </div>
       </div>
 
+      {missingServiceKey && (
+        <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 p-4 text-sm text-amber-900 dark:text-amber-100">
+          <p className="font-semibold mb-1">Admin actions are disabled</p>
+          <p className="mb-2">
+            The <code>SUPABASE_SERVICE_ROLE_KEY</code> environment variable is missing. The user list is shown in read-only mode.
+          </p>
+          <p>
+            Add the key in Vercel → Project → Settings → Environment Variables, then redeploy.
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <StatCard
           title="Total Users"
@@ -370,20 +383,22 @@ export default function AdminUsersClient({ profiles: initialProfiles, nonprofits
                           </button>
                           <button
                             onClick={() => openEditModal(profile)}
-                            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
+                            disabled={missingServiceKey}
+                            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50"
                           >
                             <Pencil className="w-3.5 h-3.5" /> Edit
                           </button>
                           <button
                             onClick={() => startEditing(profile)}
-                            disabled={editingId === profile.id}
+                            disabled={editingId === profile.id || missingServiceKey}
                             className="px-3 py-1.5 text-xs font-medium rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50 transition disabled:opacity-50"
                           >
                             Role
                           </button>
                           <button
                             onClick={() => openDeleteModal(profile)}
-                            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition"
+                            disabled={missingServiceKey}
+                            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition disabled:opacity-50"
                           >
                             <Trash2 className="w-3.5 h-3.5" /> Delete
                           </button>
