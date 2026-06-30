@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/supabase/admin'
+import { createAdminClient } from '@/lib/supabase/admin-client'
 import type { UserRole } from '@/lib/permissions'
 
 export async function PUT(
@@ -22,8 +22,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
     }
 
-    const supabase = await createClient()
-    const { data: profile, error } = await supabase
+    const admin = createAdminClient()
+    const { data: profile, error } = await admin
       .from('profiles')
       .update({ role })
       .eq('id', id)
