@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/supabase/admin'
+import { createAdminClient } from '@/lib/supabase/admin-client'
 import { notifyDonationRejected } from '@/lib/email-service'
 
 // PUT - Reject a donation (admin only)
@@ -8,30 +9,19 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { user } = await requireAdmin()
     const { id } = await params
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
 
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile || profile.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    const admin = createAdminClient()
+    if (!admin) {
+      return NextResponse.json({ error: 'Admin client not configured. Add SUPABASE_SERVICE_ROLE_KEY.' }, { status: 503 })
     }
 
     const body = await req.json()
     const { reason } = body
 
     // Get donation details
-    const { data: donation } = await supabase
+    const { data: donation } = await admin
       .from('donations')
       .select('*')
       .eq('id', id)
@@ -46,7 +36,7 @@ export async function PUT(
     }
 
     // Update donation status
-    const { data: updatedDonation, error: updateError } = await supabase
+    const { data: updatedDonation, error: updateError } = await admin
       .from('donations')
       .update({
         status: 'rejected',
@@ -63,7 +53,7 @@ export async function PUT(
     }
 
     // Log audit
-    await supabase.from('payment_audit_log').insert({
+    await admin.from('payment_audit_log').insert({
       action: 'rejected',
       entity_type: 'donation',
       entity_id: id,
@@ -76,16 +66,16 @@ export async function PUT(
     // Send rejection email notification
     if (donation.donor_id) {
       try {
-        const { data: donor } = await supabase
+        const { data: donor } = await admin
           .from('profiles')
           .select('full_name')
           .eq('id', donation.donor_id)
           .single()
 
-        const { data: donorUser } = await supabase.auth.admin.getUserById(donation.donor_id)
+        const { data: donorUser } = await admin.auth.admin.getUserById(donation.donor_id)
 
         if (donorUser?.user?.email) {
-          const { data: project } = await supabase
+          const { data: project } = await admin
             .from('projects')
             .select('title')
             .eq('id', donation.project_id)
@@ -109,8 +99,8 @@ export async function PUT(
     }
 
     return NextResponse.json({ donation: updatedDonation })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error rejecting donation:', error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: error?.message || 'Server error' }, { status: 500 })
   }
 }

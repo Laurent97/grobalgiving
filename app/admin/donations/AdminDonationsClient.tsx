@@ -27,6 +27,7 @@ import type { UserRole } from '@/lib/permissions'
 interface AdminDonationsClientProps {
   initialDonations: Donation[]
   role?: UserRole | null
+  missingServiceKey?: boolean
 }
 
 const statusConfig = {
@@ -64,7 +65,7 @@ const methodLabels: Record<string, string> = {
   card: 'Card'
 }
 
-export default function AdminDonationsClient({ initialDonations, role }: AdminDonationsClientProps) {
+export default function AdminDonationsClient({ initialDonations, role, missingServiceKey }: AdminDonationsClientProps) {
   const { showToast } = useToast()
   const [donations, setDonations] = useState<Donation[]>(initialDonations)
   const [filter, setFilter] = useState('all')
@@ -200,6 +201,18 @@ export default function AdminDonationsClient({ initialDonations, role }: AdminDo
           </button>
         </div>
       </div>
+
+      {missingServiceKey && (
+        <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 p-4 text-sm text-amber-900 dark:text-amber-100">
+          <p className="font-semibold mb-1">Verify / Reject actions are disabled</p>
+          <p className="mb-2">
+            The <code>SUPABASE_SERVICE_ROLE_KEY</code> environment variable is missing. Donations are shown in read-only mode.
+          </p>
+          <p>
+            Add the key in Vercel → Project → Settings → Environment Variables, then redeploy.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
@@ -347,7 +360,7 @@ export default function AdminDonationsClient({ initialDonations, role }: AdminDo
                           <>
                             <button
                               onClick={() => handleVerify(donation.id)}
-                              disabled={processingId === donation.id}
+                              disabled={processingId === donation.id || missingServiceKey}
                               className="p-2 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 disabled:opacity-50"
                               title="Verify"
                               aria-label="Verify donation"
@@ -360,7 +373,8 @@ export default function AdminDonationsClient({ initialDonations, role }: AdminDo
                             </button>
                             <button
                               onClick={() => setRejectingId(donation.id)}
-                              className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600"
+                              disabled={missingServiceKey}
+                              className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 disabled:opacity-50"
                               title="Reject"
                               aria-label="Reject donation"
                             >
