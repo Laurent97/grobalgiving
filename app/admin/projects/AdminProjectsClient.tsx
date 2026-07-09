@@ -23,7 +23,8 @@ import {
   X,
   ArrowUpRight,
   ArrowDownRight,
-  Loader2
+  Loader2,
+  Users
 } from 'lucide-react'
 
 interface Project {
@@ -47,6 +48,7 @@ interface Project {
   gallery_images?: string[]
   tags?: string[]
   video_url?: string
+  donor_count?: number
   nonprofits?: {
     name: string
   }
@@ -83,6 +85,9 @@ export default function AdminProjectsClient({
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showDonationsModal, setShowDonationsModal] = useState(false)
+  const [showDonorCountModal, setShowDonorCountModal] = useState(false)
+  const [donorCountInput, setDonorCountInput] = useState('')
+  const [savingDonorCount, setSavingDonorCount] = useState(false)
   
   // Filters
   const [status, setStatus] = useState(initialStatus || '')
@@ -293,6 +298,33 @@ export default function AdminProjectsClient({
       }
     } catch (error) {
       console.error('Error toggling visibility:', error)
+    }
+  }
+
+  const handleUpdateDonorCount = async () => {
+    if (!selectedProject) return
+    const val = parseInt(donorCountInput, 10)
+    if (isNaN(val) || val < 0) return
+    setSavingDonorCount(true)
+    try {
+      const response = await fetch(`/api/admin/projects/${selectedProject.id}/donor-count`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ donor_count: val })
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        alert(data.error || 'Failed to update donor count')
+        return
+      }
+      setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, donor_count: val } : p))
+      setShowDonorCountModal(false)
+      setSelectedProject(null)
+    } catch (err) {
+      console.error('Error updating donor count:', err)
+      alert('Failed to update donor count')
+    } finally {
+      setSavingDonorCount(false)
     }
   }
 
@@ -569,6 +601,7 @@ export default function AdminProjectsClient({
                   <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Nonprofit</th>
                   <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Goal</th>
                   <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Raised</th>
+                  <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Donors</th>
                   <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
                   <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Featured</th>
                   <th className="px-6 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Visible</th>
@@ -610,6 +643,9 @@ export default function AdminProjectsClient({
                         <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                           {progress}% of goal
                         </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {(project.donor_count ?? 0).toLocaleString()}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
@@ -655,6 +691,18 @@ export default function AdminProjectsClient({
                             aria-label="Edit project"
                           >
                             <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedProject(project)
+                              setDonorCountInput(String(project.donor_count ?? 0))
+                              setShowDonorCountModal(true)
+                            }}
+                            className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition"
+                            title="Edit donor count"
+                            aria-label="Edit donor count"
+                          >
+                            <Users className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => {
@@ -976,6 +1024,50 @@ export default function AdminProjectsClient({
                 className="px-4 py-2 rounded-lg text-sm font-medium bg-red-600 hover:bg-red-700 text-white transition"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Donor Count Modal */}
+      {showDonorCountModal && selectedProject && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 max-w-sm w-full p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Edit Donor Count</h2>
+              <button
+                onClick={() => { setShowDonorCountModal(false); setSelectedProject(null) }}
+                className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{selectedProject.title}</p>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Number of Donors</label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={donorCountInput}
+              onChange={(e) => setDonorCountInput(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => { setShowDonorCountModal(false); setSelectedProject(null) }}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateDonorCount}
+                disabled={savingDonorCount}
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50 flex items-center gap-2"
+              >
+                {savingDonorCount && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save
               </button>
             </div>
           </div>

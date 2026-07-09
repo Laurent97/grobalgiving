@@ -355,6 +355,7 @@ export async function PUT(req: Request) {
       if (updateData.is_visible !== undefined) update.is_visible = updateData.is_visible
       if (updateData.status !== undefined) update.status = updateData.status
       if (updateData.amount_received !== undefined) update.amount_received = Number(updateData.amount_received)
+      if (updateData.donor_count !== undefined) update.donor_count = Number(updateData.donor_count)
       if (updateData.nonprofit_id) update.nonprofit_id = updateData.nonprofit_id
     }
 
