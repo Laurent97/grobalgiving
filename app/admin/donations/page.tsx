@@ -28,6 +28,25 @@ export default async function AdminDonationsPage() {
   // joins may return null for related rows filtered by their own RLS.
   const client = admin ?? await createClient()
 
+  // Try join with project+nonprofit; fall back to simpler join if that fails
+  const FULL_SELECT = `*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url, email)`
+  const SIMPLE_SELECT = `*, project:projects(id, title, slug), donor:profiles(id, full_name, avatar_url, email)`
+
+  async function queryDonations(filter?: Record<string, any>) {
+    let q = client.from('donations').select(FULL_SELECT).order('created_at', { ascending: false })
+    if (filter?.in) q = (q as any).in('project_id', filter.in)
+    const { data, error } = await q
+    if (error) {
+      console.error('[donations page] full join error:', error.message, '— retrying with simple join')
+      let q2 = client.from('donations').select(SIMPLE_SELECT).order('created_at', { ascending: false })
+      if (filter?.in) q2 = (q2 as any).in('project_id', filter.in)
+      const { data: data2, error: err2 } = await q2
+      if (err2) console.error('[donations page] simple join error:', err2.message)
+      return data2 ?? []
+    }
+    return data ?? []
+  }
+
   if (isNonprofitAdmin) {
     const { data: projectIds, error: pidErr } = await client
       .from('projects')
@@ -36,28 +55,21 @@ export default async function AdminDonationsPage() {
 
     if (pidErr) console.error('[donations page] project ids error:', pidErr.message)
     const ids = (projectIds || []).map((p: any) => p.id)
+    const filterIds = ids.length > 0 ? ids : ['00000000-0000-0000-0000-000000000000']
 
-    const { data, error } = await client
-      .from('donations')
-      .select(`*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url)`)
-      .in('project_id', ids.length > 0 ? ids : ['00000000-0000-0000-0000-000000000000'])
-      .order('created_at', { ascending: false })
-
-    if (error) console.error('[donations page] nonprofit admin query error:', error.message)
-    rawCount = data?.length ?? 0
-    console.log('[donations page] nonprofit admin result count:', rawCount)
-    donations = data
+    donations = await queryDonations({ in: filterIds })
   } else {
-    const { data, error } = await client
-      .from('donations')
-      .select(`*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url)`)
-      .order('created_at', { ascending: false })
-
-    if (error) console.error('[donations page] admin query error:', error.message)
-    rawCount = data?.length ?? 0
-    console.log('[donations page] admin result count:', rawCount)
-    donations = data
+    donations = await queryDonations()
   }
+
+  rawCount = donations.length
+  console.log('[donations page] result count:', rawCount)
+
+  // Separate simple count to detect rows even if joins fail
+  const { count: dbCount } = await client
+    .from('donations')
+    .select('*', { count: 'exact', head: true })
+  console.log('[donations page] db count (no join):', dbCount)
 
   return (
     <AdminShell role={profile.role}>
@@ -66,6 +78,7 @@ export default async function AdminDonationsPage() {
         role={profile.role}
         missingServiceKey={missingServiceKey}
         rawCount={rawCount ?? 0}
+        dbCount={dbCount ?? 0}
       />
     </AdminShell>
   )

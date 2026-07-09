@@ -29,6 +29,7 @@ interface AdminDonationsClientProps {
   role?: UserRole | null
   missingServiceKey?: boolean
   rawCount?: number
+  dbCount?: number
 }
 
 const statusConfig = {
@@ -67,7 +68,7 @@ const methodLabels: Record<string, string> = {
   paypal: 'PayPal'
 }
 
-export default function AdminDonationsClient({ initialDonations, role, missingServiceKey, rawCount }: AdminDonationsClientProps) {
+export default function AdminDonationsClient({ initialDonations, role, missingServiceKey, rawCount, dbCount }: AdminDonationsClientProps) {
   const { showToast } = useToast()
   const [donations, setDonations] = useState<Donation[]>(initialDonations)
   const [filter, setFilter] = useState('all')
@@ -217,11 +218,20 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
         </div>
       )}
 
-      {!missingServiceKey && rawCount === 0 && donations.length === 0 && (
+      {/* Join failed — db has rows but query returned 0 */}
+      {(dbCount ?? 0) > 0 && donations.length === 0 && (
+        <div className="mb-6 rounded-xl border border-red-300 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-900 dark:text-red-100">
+          <p className="font-semibold mb-1">⚠️ {dbCount} donation(s) exist but couldn&apos;t be loaded</p>
+          <p className="mb-2">The database has donations but the query join failed — this usually means the <strong>SQL migration hasn&apos;t been fully run</strong> in Supabase (missing columns, tables, or RLS policies).</p>
+          <p className="font-medium">Fix: Open Supabase → SQL Editor → paste and run <code className="bg-red-100 dark:bg-red-800 px-1 rounded">supabase-migration.sql</code> from your project root, then refresh this page.</p>
+        </div>
+      )}
+
+      {/* Truly empty database */}
+      {(dbCount ?? 0) === 0 && !missingServiceKey && (
         <div className="mb-6 rounded-xl border border-blue-300 bg-blue-50 dark:bg-blue-900/20 p-4 text-sm text-blue-900 dark:text-blue-100">
-          <p className="font-semibold mb-1">No donations in the database yet</p>
+          <p className="font-semibold mb-1">No donations yet</p>
           <p>Donations will appear here once donors submit payments through the platform.</p>
-          <p className="mt-1">If you expected to see donations, make sure the SQL migration has been run in your Supabase project (copy from <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">supabase-migration.sql</code>).</p>
         </div>
       )}
 
@@ -320,7 +330,12 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-gray-900 dark:text-white">{donation.donor?.full_name || 'Anonymous'}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-900 dark:text-white">{donation.donor?.full_name || 'Anonymous'}</span>
+                        {donation.donor?.email && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400">{donation.donor.email}</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="font-semibold text-gray-900 dark:text-white">
@@ -483,29 +498,43 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
                 <div>
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Donor</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedDonation.donor?.full_name || 'Anonymous'}</p>
+                  {selectedDonation.donor?.email && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{selectedDonation.donor.email}</p>
+                  )}
                 </div>
                 <div>
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Amount</p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    ${selectedDonation.amount.toLocaleString()} {selectedDonation.currency}
+                    {selectedDonation.amount.toLocaleString()} {selectedDonation.currency}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Payment Method</p>
                   <p className="text-sm text-gray-900 dark:text-white flex items-center gap-2">
                     {getPaymentMethodIcon(selectedDonation.payment_method_type || '')}
-                    {methodLabels[selectedDonation.payment_method_type || ''] || selectedDonation.payment_method_type}
+                    {methodLabels[selectedDonation.payment_method_type || ''] || selectedDonation.payment_method_type || 'Unknown'}
                   </p>
+                  {selectedDonation.payment_method_id && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Account ID: {selectedDonation.payment_method_id}</p>
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Transaction Reference</p>
+                  <p className="text-sm font-mono text-gray-900 dark:text-white break-all">{selectedDonation.transaction_reference || '—'}</p>
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Project</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedDonation.project?.title}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{selectedDonation.project?.nonprofit?.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedDonation.project?.title || '—'}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{selectedDonation.project?.nonprofit?.name || ''}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Frequency</p>
+                  <p className="text-sm text-gray-900 dark:text-white capitalize">{selectedDonation.frequency || 'once'}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date Submitted</p>
                   <p className="text-sm text-gray-900 dark:text-white">
                     {new Date(selectedDonation.created_at).toLocaleString()}
                   </p>
@@ -517,8 +546,21 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
                     {selectedDonation.status}
                   </span>
                 </div>
+                {selectedDonation.verified_at && (
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Verified At</p>
+                    <p className="text-sm text-gray-900 dark:text-white">{new Date(selectedDonation.verified_at).toLocaleString()}</p>
+                  </div>
+                )}
               </div>
             </div>
+
+            {selectedDonation.donor_comment && (
+              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mb-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Donor Comment</p>
+                <p className="text-sm text-gray-900 dark:text-white">{selectedDonation.donor_comment}</p>
+              </div>
+            )}
 
             {selectedDonation.dedication_type && (
               <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mb-6">
@@ -536,7 +578,7 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
               </div>
             )}
 
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-wrap justify-end gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
               {selectedDonation.receipt_url && (
                 <a
                   href={selectedDonation.receipt_url}
@@ -547,6 +589,32 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
                   <ExternalLink className="w-4 h-4" />
                   View Receipt
                 </a>
+              )}
+              {selectedDonation.status === 'pending' && (
+                <>
+                  <button
+                    onClick={() => {
+                      handleVerify(selectedDonation.id)
+                      setSelectedDonation(null)
+                    }}
+                    disabled={processingId === selectedDonation.id || missingServiceKey}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Verify Donation
+                  </button>
+                  <button
+                    onClick={() => {
+                      setRejectingId(selectedDonation.id)
+                      setSelectedDonation(null)
+                    }}
+                    disabled={missingServiceKey}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    Reject
+                  </button>
+                </>
               )}
               <button
                 onClick={() => setSelectedDonation(null)}

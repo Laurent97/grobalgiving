@@ -67,6 +67,7 @@ export type Donation = {
 export type UserProfile = {
   id: string
   full_name?: string
+  email?: string
   role: 'donor' | 'nonprofit_admin' | 'admin'
   nonprofit_id?: string
   avatar_url?: string
