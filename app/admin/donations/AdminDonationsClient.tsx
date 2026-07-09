@@ -63,7 +63,8 @@ const methodLabels: Record<string, string> = {
   bank: 'Bank Transfer',
   mobile_money: 'Mobile Money',
   crypto: 'Cryptocurrency',
-  card: 'Card'
+  card: 'Card',
+  paypal: 'PayPal'
 }
 
 export default function AdminDonationsClient({ initialDonations, role, missingServiceKey, rawCount }: AdminDonationsClientProps) {

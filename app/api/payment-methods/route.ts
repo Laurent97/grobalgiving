@@ -39,10 +39,22 @@ export async function GET(req: Request) {
       console.error('Error fetching crypto wallets:', cryptoError)
     }
 
+    // Fetch active PayPal accounts
+    const { data: paypalAccounts, error: paypalError } = await supabase
+      .from('paypal_accounts')
+      .select('*')
+      .eq('status', true)
+      .order('display_order', { ascending: true })
+
+    if (paypalError) {
+      console.error('Error fetching PayPal accounts:', paypalError)
+    }
+
     return NextResponse.json({
       bank_accounts: bankAccounts || [],
       mobile_money: mobileMoneyAccounts || [],
-      crypto_wallets: cryptoWallets || []
+      crypto_wallets: cryptoWallets || [],
+      paypal_accounts: paypalAccounts || []
     })
   } catch (error) {
     console.error('Error fetching payment methods:', error)

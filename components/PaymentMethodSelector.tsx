@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import { Landmark, Smartphone, Bitcoin, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useToast } from './Toast'
-import type { BankAccount, MobileMoneyAccount, CryptoWallet } from '@/types'
+import type { BankAccount, MobileMoneyAccount, CryptoWallet, PaypalAccount } from '@/types'
 
 interface PaymentMethodSelectorProps {
   onSelect: (method: {
-    type: 'bank' | 'mobile_money' | 'crypto'
+    type: 'bank' | 'mobile_money' | 'crypto' | 'paypal'
     methodId: string
-    details: BankAccount | MobileMoneyAccount | CryptoWallet
+    details: BankAccount | MobileMoneyAccount | CryptoWallet | PaypalAccount
   }) => void
   selectedMethod?: string
 }
@@ -18,6 +18,7 @@ interface PaymentMethodsData {
   bank_accounts: BankAccount[]
   mobile_money: MobileMoneyAccount[]
   crypto_wallets: CryptoWallet[]
+  paypal_accounts: PaypalAccount[]
 }
 
 export default function PaymentMethodSelector({ onSelect, selectedMethod }: PaymentMethodSelectorProps) {
@@ -25,10 +26,11 @@ export default function PaymentMethodSelector({ onSelect, selectedMethod }: Paym
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsData>({
     bank_accounts: [],
     mobile_money: [],
-    crypto_wallets: []
+    crypto_wallets: [],
+    paypal_accounts: []
   })
   const [loading, setLoading] = useState(true)
-  const [selectedType, setSelectedType] = useState<'bank' | 'mobile_money' | 'crypto' | null>(null)
+  const [selectedType, setSelectedType] = useState<'bank' | 'mobile_money' | 'crypto' | 'paypal' | null>(null)
   const [selectedId, setSelectedId] = useState<string>('')
 
   useEffect(() => {
@@ -70,12 +72,14 @@ export default function PaymentMethodSelector({ onSelect, selectedMethod }: Paym
       return paymentMethods.bank_accounts.find(a => a.id === selectedId) || null
     } else if (selectedType === 'mobile_money') {
       return paymentMethods.mobile_money.find(a => a.id === selectedId) || null
-    } else {
+    } else if (selectedType === 'crypto') {
       return paymentMethods.crypto_wallets.find(a => a.id === selectedId) || null
+    } else {
+      return paymentMethods.paypal_accounts.find(a => a.id === selectedId) || null
     }
   }
 
-  const handleSelect = (type: 'bank' | 'mobile_money' | 'crypto', id: string) => {
+  const handleSelect = (type: 'bank' | 'mobile_money' | 'crypto' | 'paypal', id: string) => {
     setSelectedType(type)
     setSelectedId(id)
   }
@@ -90,7 +94,8 @@ export default function PaymentMethodSelector({ onSelect, selectedMethod }: Paym
 
   const hasAnyMethods = paymentMethods.bank_accounts.length > 0 ||
     paymentMethods.mobile_money.length > 0 ||
-    paymentMethods.crypto_wallets.length > 0
+    paymentMethods.crypto_wallets.length > 0 ||
+    paymentMethods.paypal_accounts.length > 0
 
   if (!hasAnyMethods) {
     return (
@@ -271,6 +276,61 @@ export default function PaymentMethodSelector({ onSelect, selectedMethod }: Paym
                   </p>
                 </div>
                 {selectedType === 'crypto' && selectedId === wallet.id && (
+                  <CheckCircle2 className="w-5 h-5 text-gg-primary" />
+                )}
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* PayPal Section */}
+      {paymentMethods.paypal_accounts.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 flex items-center justify-center">
+                <span className="text-indigo-600 font-bold text-lg leading-none">P</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900">PayPal</h3>
+                <p className="text-sm text-gray-600">Pay securely via PayPal</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-3">
+            {paymentMethods.paypal_accounts.map((account) => (
+              <label
+                key={account.id}
+                className={`flex items-start gap-4 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                  selectedType === 'paypal' && selectedId === account.id
+                    ? 'border-gg-primary bg-orange-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value={account.id}
+                  checked={selectedType === 'paypal' && selectedId === account.id}
+                  onChange={() => handleSelect('paypal', account.id)}
+                  className="mt-1 w-4 h-4 text-gg-primary border-gray-300 focus:ring-gg-primary"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-900">{account.account_name}</span>
+                    <span className="text-sm text-gray-500">{account.currency}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">{account.email}</p>
+                  {account.me_link && (
+                    <p className="text-xs text-indigo-600 mt-1 truncate">{account.me_link}</p>
+                  )}
+                  <p className="text-xs text-indigo-600 mt-2 flex items-center gap-1">
+                    <span className="text-lg">🔒</span>
+                    Secure PayPal payment
+                  </p>
+                </div>
+                {selectedType === 'paypal' && selectedId === account.id && (
                   <CheckCircle2 className="w-5 h-5 text-gg-primary" />
                 )}
               </label>

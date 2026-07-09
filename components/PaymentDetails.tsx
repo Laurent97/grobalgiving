@@ -4,13 +4,13 @@ import { useState } from 'react'
 import { Loader2, CheckCircle, Copy, Landmark, Smartphone, Bitcoin, AlertTriangle } from 'lucide-react'
 import { useToast } from './Toast'
 import FileUploader from './FileUploader'
-import type { BankAccount, MobileMoneyAccount, CryptoWallet } from '@/types'
+import type { BankAccount, MobileMoneyAccount, CryptoWallet, PaypalAccount } from '@/types'
 
 interface PaymentDetailsProps {
   method: {
-    type: 'bank' | 'mobile_money' | 'crypto'
+    type: 'bank' | 'mobile_money' | 'crypto' | 'paypal'
     methodId: string
-    details: BankAccount | MobileMoneyAccount | CryptoWallet
+    details: BankAccount | MobileMoneyAccount | CryptoWallet | PaypalAccount
   }
   donationReference: string
   totalAmount: number
@@ -241,6 +241,117 @@ export default function PaymentDetails({
               />
               <label htmlFor="mobile-confirm" className="text-sm text-gray-700">
                 I confirm that I have sent the mobile money payment.
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onBack}
+                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-gg-primary hover:bg-gg-primary-hover text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                {loading ? 'Submitting...' : 'Confirm Donation'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  if (method.type === 'paypal') {
+    const account = method.details as PaypalAccount
+    return (
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <span className="text-indigo-600 font-bold text-xl leading-none">P</span>
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Complete Your PayPal Payment</h2>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div className="bg-gray-50 rounded-lg p-4">
+            <p className="text-sm text-gray-600">Donation Reference</p>
+            <p className="text-lg font-bold text-gray-900">{donationReference}</p>
+            <p className="text-sm text-gray-500">Total Amount: {totalAmount} {currency}</p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">PayPal Details</h3>
+            <div className="space-y-3 bg-gray-50 rounded-lg p-4">
+              <DetailRow label="Account Name" value={account.account_name} />
+              <DetailRow label="PayPal Email" value={account.email} isCopyable />
+              <DetailRow label="Currency" value={account.currency} />
+            </div>
+          </div>
+
+          {account.me_link && (
+            <a
+              href={account.me_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-4 rounded-xl transition-colors text-lg"
+            >
+              <span className="font-bold text-xl">P</span>
+              Pay with PayPal
+            </a>
+          )}
+
+          {!account.me_link && (
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+              <p className="text-sm text-indigo-800">
+                <strong>Send payment to:</strong>{' '}
+                <span className="font-mono select-all">{account.email}</span>
+              </p>
+              <p className="text-sm text-indigo-700 mt-1">
+                Include reference <strong>{getProjectCode()}</strong> in the PayPal note.
+              </p>
+            </div>
+          )}
+
+          {account.instructions && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-yellow-800">Instructions</h4>
+                  <p className="text-sm text-yellow-700 mt-1">{account.instructions}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <FileUploader
+              onUpload={setReceiptUrl}
+              value={receiptUrl}
+              label="Upload PayPal Receipt"
+              description="Screenshot of your PayPal payment confirmation (Max 5MB)"
+            />
+
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="paypal-confirm"
+                checked={confirmed}
+                onChange={(e) => setConfirmed(e.target.checked)}
+                className="mt-1 w-4 h-4 text-gg-primary border-gray-300 rounded focus:ring-gg-primary"
+                title="Payment confirmation"
+                aria-label="Payment confirmation"
+              />
+              <label htmlFor="paypal-confirm" className="text-sm text-gray-700">
+                I confirm that I have completed the PayPal payment for the amount shown above.
               </label>
             </div>
 

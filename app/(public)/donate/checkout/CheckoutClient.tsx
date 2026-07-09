@@ -23,7 +23,7 @@ export default function CheckoutClient({ initialCartItems, user }: CheckoutClien
   const [cartItems, setCartItems] = useState<DonationCartItem[]>(initialCartItems)
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('cart')
   const [selectedMethod, setSelectedMethod] = useState<{
-    type: 'bank' | 'mobile_money' | 'crypto'
+    type: 'bank' | 'mobile_money' | 'crypto' | 'paypal'
     methodId: string
     details: any
   } | null>(null)
@@ -106,7 +106,7 @@ export default function CheckoutClient({ initialCartItems, user }: CheckoutClien
   }
 
   const handlePaymentMethodSelect = (method: {
-    type: 'bank' | 'mobile_money' | 'crypto'
+    type: 'bank' | 'mobile_money' | 'crypto' | 'paypal'
     methodId: string
     details: any
   }) => {
@@ -389,7 +389,7 @@ export default function CheckoutClient({ initialCartItems, user }: CheckoutClien
                   <div className="flex justify-between">
                     <span className="text-gray-600">Payment Method</span>
                     <span className="font-medium text-gray-900">
-                      {selectedMethod?.type === 'bank' ? 'Bank Transfer' : selectedMethod?.type === 'mobile_money' ? 'Mobile Money' : 'Cryptocurrency'}
+                      {selectedMethod?.type === 'bank' ? 'Bank Transfer' : selectedMethod?.type === 'mobile_money' ? 'Mobile Money' : selectedMethod?.type === 'paypal' ? 'PayPal' : 'Cryptocurrency'}
                     </span>
                   </div>
                   <div className="flex justify-between">

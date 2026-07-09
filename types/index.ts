@@ -48,7 +48,7 @@ export type Donation = {
   currency: string
   frequency: 'once' | 'monthly'
   status: 'pending' | 'completed' | 'failed' | 'verified' | 'rejected'
-  payment_method_type?: 'bank' | 'mobile_money' | 'crypto' | 'card'
+  payment_method_type?: 'bank' | 'mobile_money' | 'crypto' | 'card' | 'paypal'
   payment_method_id?: string
   transaction_reference?: string
   receipt_url?: string
