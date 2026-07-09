@@ -12,6 +12,7 @@ export default async function AdminDonationsPage() {
   const { profile } = await requireNonprofitAdmin()
 
   let missingServiceKey = false
+  let rawCount: number | null = null
   const admin = createAdminClient()
 
   // Build the select – for nonprofit admins, use an inner join so PostgREST
@@ -20,40 +21,41 @@ export default async function AdminDonationsPage() {
 
   let donations: any[] | null = null
 
-  if (admin) {
-    if (isNonprofitAdmin) {
-      // Filter via the projects table using a subquery on project_id
-      const { data: projectIds } = await admin
-        .from('projects')
-        .select('id')
-        .eq('nonprofit_id', profile.nonprofit_id!)
+  if (!admin) missingServiceKey = true
 
-      const ids = (projectIds || []).map((p: any) => p.id)
+  // Use service-role client when available (bypasses RLS).
+  // Fall back to session client — this works for admins but nested
+  // joins may return null for related rows filtered by their own RLS.
+  const client = admin ?? await createClient()
 
-      const { data } = await admin
-        .from('donations')
-        .select(`*, project:projects(*, nonprofit:nonprofits(*)), donor:profiles(*)`)
-        .in('project_id', ids.length > 0 ? ids : ['00000000-0000-0000-0000-000000000000'])
-        .order('created_at', { ascending: false })
+  if (isNonprofitAdmin) {
+    const { data: projectIds, error: pidErr } = await client
+      .from('projects')
+      .select('id')
+      .eq('nonprofit_id', profile.nonprofit_id!)
 
-      donations = data
-    } else {
-      const { data } = await admin
-        .from('donations')
-        .select(`*, project:projects(*, nonprofit:nonprofits(*)), donor:profiles(*)`)
-        .order('created_at', { ascending: false })
+    if (pidErr) console.error('[donations page] project ids error:', pidErr.message)
+    const ids = (projectIds || []).map((p: any) => p.id)
 
-      donations = data
-    }
-  } else {
-    missingServiceKey = true
-    const supabase = await createClient()
-
-    const { data } = await supabase
+    const { data, error } = await client
       .from('donations')
-      .select(`*, project:projects(*, nonprofit:nonprofits(*)), donor:profiles(*)`)
+      .select(`*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url)`)
+      .in('project_id', ids.length > 0 ? ids : ['00000000-0000-0000-0000-000000000000'])
       .order('created_at', { ascending: false })
 
+    if (error) console.error('[donations page] nonprofit admin query error:', error.message)
+    rawCount = data?.length ?? 0
+    console.log('[donations page] nonprofit admin result count:', rawCount)
+    donations = data
+  } else {
+    const { data, error } = await client
+      .from('donations')
+      .select(`*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url)`)
+      .order('created_at', { ascending: false })
+
+    if (error) console.error('[donations page] admin query error:', error.message)
+    rawCount = data?.length ?? 0
+    console.log('[donations page] admin result count:', rawCount)
     donations = data
   }
 
@@ -63,6 +65,7 @@ export default async function AdminDonationsPage() {
         initialDonations={donations || []}
         role={profile.role}
         missingServiceKey={missingServiceKey}
+        rawCount={rawCount ?? 0}
       />
     </AdminShell>
   )

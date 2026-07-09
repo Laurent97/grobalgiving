@@ -28,6 +28,7 @@ interface AdminDonationsClientProps {
   initialDonations: Donation[]
   role?: UserRole | null
   missingServiceKey?: boolean
+  rawCount?: number
 }
 
 const statusConfig = {
@@ -65,7 +66,7 @@ const methodLabels: Record<string, string> = {
   card: 'Card'
 }
 
-export default function AdminDonationsClient({ initialDonations, role, missingServiceKey }: AdminDonationsClientProps) {
+export default function AdminDonationsClient({ initialDonations, role, missingServiceKey, rawCount }: AdminDonationsClientProps) {
   const { showToast } = useToast()
   const [donations, setDonations] = useState<Donation[]>(initialDonations)
   const [filter, setFilter] = useState('all')
@@ -204,13 +205,22 @@ export default function AdminDonationsClient({ initialDonations, role, missingSe
 
       {missingServiceKey && (
         <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 p-4 text-sm text-amber-900 dark:text-amber-100">
-          <p className="font-semibold mb-1">Verify / Reject actions are disabled</p>
+          <p className="font-semibold mb-1">⚠️ Service role key missing — verify / reject actions are disabled</p>
           <p className="mb-2">
-            The <code>SUPABASE_SERVICE_ROLE_KEY</code> environment variable is missing. Donations are shown in read-only mode.
+            The <code className="bg-amber-100 dark:bg-amber-800 px-1 rounded">SUPABASE_SERVICE_ROLE_KEY</code> environment variable is not set.
+            Donations are shown in read-only mode and some data may be incomplete due to RLS restrictions.
           </p>
-          <p>
-            Add the key in Vercel → Project → Settings → Environment Variables, then redeploy.
+          <p className="font-medium">
+            Fix: Vercel → Your project → Settings → Environment Variables → add <code className="bg-amber-100 dark:bg-amber-800 px-1 rounded">SUPABASE_SERVICE_ROLE_KEY</code> → Redeploy.
           </p>
+        </div>
+      )}
+
+      {!missingServiceKey && rawCount === 0 && donations.length === 0 && (
+        <div className="mb-6 rounded-xl border border-blue-300 bg-blue-50 dark:bg-blue-900/20 p-4 text-sm text-blue-900 dark:text-blue-100">
+          <p className="font-semibold mb-1">No donations in the database yet</p>
+          <p>Donations will appear here once donors submit payments through the platform.</p>
+          <p className="mt-1">If you expected to see donations, make sure the SQL migration has been run in your Supabase project (copy from <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">supabase-migration.sql</code>).</p>
         </div>
       )}
 
