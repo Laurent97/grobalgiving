@@ -583,3 +583,35 @@ BEGIN
     );
   END IF;
 END$$;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- PayPal accounts table
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS paypal_accounts (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email           TEXT NOT NULL,
+  account_name    TEXT NOT NULL,
+  currency        TEXT DEFAULT 'USD',
+  me_link         TEXT,
+  client_id       TEXT,
+  instructions    TEXT,
+  status          BOOLEAN DEFAULT true,
+  display_order   INT DEFAULT 0,
+  created_by      UUID REFERENCES profiles(id),
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE paypal_accounts ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Anyone view active paypal accounts' AND polrelid = 'paypal_accounts'::regclass) THEN
+    CREATE POLICY "Anyone view active paypal accounts" ON paypal_accounts FOR SELECT USING (status = true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Admins manage paypal accounts' AND polrelid = 'paypal_accounts'::regclass) THEN
+    CREATE POLICY "Admins manage paypal accounts" ON paypal_accounts FOR ALL USING (
+      EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+  END IF;
+END$$;

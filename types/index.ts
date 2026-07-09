@@ -164,7 +164,22 @@ export type CryptoWallet = {
   created_by?: string
 }
 
-export type PaymentMethod = BankAccount | MobileMoneyAccount | CryptoWallet
+export type PaypalAccount = {
+  id: string
+  email: string
+  account_name: string
+  currency: string
+  me_link?: string
+  client_id?: string
+  instructions?: string
+  status: boolean
+  display_order: number
+  created_at: string
+  updated_at: string
+  created_by?: string
+}
+
+export type PaymentMethod = BankAccount | MobileMoneyAccount | CryptoWallet | PaypalAccount
 
 export type DonationCartItem = {
   id: string

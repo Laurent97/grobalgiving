@@ -17,31 +17,35 @@ import {
   MoreHorizontal
 } from 'lucide-react'
 import { useToast } from '@/components/Toast'
-import type { BankAccount, MobileMoneyAccount, CryptoWallet } from '@/types'
+import type { BankAccount, MobileMoneyAccount, CryptoWallet, PaypalAccount } from '@/types'
 import BankAccountForm from './BankAccountForm'
 import MobileMoneyForm from './MobileMoneyForm'
 import CryptoWalletForm from './CryptoWalletForm'
+import PaypalAccountForm from './PaypalAccountForm'
 
-type PaymentMethodType = 'bank' | 'mobile_money' | 'crypto'
+type PaymentMethodType = 'bank' | 'mobile_money' | 'crypto' | 'paypal'
 
 interface AdminPaymentMethodsClientProps {
   bankAccounts: BankAccount[]
   mobileMoney: MobileMoneyAccount[]
   cryptoWallets: CryptoWallet[]
+  paypalAccounts: PaypalAccount[]
 }
 
 export default function AdminPaymentMethodsClient({
   bankAccounts: initialBankAccounts,
   mobileMoney: initialMobileMoney,
-  cryptoWallets: initialCryptoWallets
+  cryptoWallets: initialCryptoWallets,
+  paypalAccounts: initialPaypalAccounts
 }: AdminPaymentMethodsClientProps) {
   const { showToast } = useToast()
   const [activeTab, setActiveTab] = useState<PaymentMethodType>('bank')
   const [bankAccounts, setBankAccounts] = useState(initialBankAccounts)
   const [mobileMoney, setMobileMoney] = useState(initialMobileMoney)
   const [cryptoWallets, setCryptoWallets] = useState(initialCryptoWallets)
+  const [paypalAccounts, setPaypalAccounts] = useState(initialPaypalAccounts)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingItem, setEditingItem] = useState<BankAccount | MobileMoneyAccount | CryptoWallet | null>(null)
+  const [editingItem, setEditingItem] = useState<BankAccount | MobileMoneyAccount | CryptoWallet | PaypalAccount | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
@@ -49,17 +53,20 @@ export default function AdminPaymentMethodsClient({
   const tabs = [
     { id: 'bank' as PaymentMethodType, label: 'Bank Accounts', icon: Landmark, count: bankAccounts.length, active: bankAccounts.filter(a => a.status).length },
     { id: 'mobile_money' as PaymentMethodType, label: 'Mobile Money', icon: Smartphone, count: mobileMoney.length, active: mobileMoney.filter(a => a.status).length },
-    { id: 'crypto' as PaymentMethodType, label: 'Crypto Wallets', icon: Bitcoin, count: cryptoWallets.length, active: cryptoWallets.filter(a => a.status).length }
+    { id: 'crypto' as PaymentMethodType, label: 'Crypto Wallets', icon: Bitcoin, count: cryptoWallets.length, active: cryptoWallets.filter(a => a.status).length },
+    { id: 'paypal' as PaymentMethodType, label: 'PayPal', icon: ArrowUpRight, count: paypalAccounts.length, active: paypalAccounts.filter(a => a.status).length }
   ]
 
-  const handleSuccess = (type: PaymentMethodType, item: BankAccount | MobileMoneyAccount | CryptoWallet) => {
+  const handleSuccess = (type: PaymentMethodType, item: BankAccount | MobileMoneyAccount | CryptoWallet | PaypalAccount) => {
     if (editingItem) {
       if (type === 'bank') {
         setBankAccounts(prev => prev.map(a => a.id === item.id ? item as BankAccount : a))
       } else if (type === 'mobile_money') {
         setMobileMoney(prev => prev.map(a => a.id === item.id ? item as MobileMoneyAccount : a))
-      } else {
+      } else if (type === 'crypto') {
         setCryptoWallets(prev => prev.map(a => a.id === item.id ? item as CryptoWallet : a))
+      } else {
+        setPaypalAccounts(prev => prev.map(a => a.id === item.id ? item as PaypalAccount : a))
       }
       showToast('success', 'Payment method updated successfully')
     } else {
@@ -67,8 +74,10 @@ export default function AdminPaymentMethodsClient({
         setBankAccounts(prev => [...prev, item as BankAccount])
       } else if (type === 'mobile_money') {
         setMobileMoney(prev => [...prev, item as MobileMoneyAccount])
-      } else {
+      } else if (type === 'crypto') {
         setCryptoWallets(prev => [...prev, item as CryptoWallet])
+      } else {
+        setPaypalAccounts(prev => [...prev, item as PaypalAccount])
       }
       showToast('success', 'Payment method added successfully')
     }
@@ -84,7 +93,8 @@ export default function AdminPaymentMethodsClient({
       let endpoint = ''
       if (type === 'bank') endpoint = '/api/admin/payment-methods/bank'
       else if (type === 'mobile_money') endpoint = '/api/admin/payment-methods/mobile-money'
-      else endpoint = '/api/admin/payment-methods/crypto'
+      else if (type === 'crypto') endpoint = '/api/admin/payment-methods/crypto'
+      else endpoint = '/api/admin/payment-methods/paypal'
 
       const response = await fetch(`${endpoint}/${id}`, { method: 'DELETE' })
       if (response.ok) {
@@ -92,8 +102,10 @@ export default function AdminPaymentMethodsClient({
           setBankAccounts(prev => prev.filter(a => a.id !== id))
         } else if (type === 'mobile_money') {
           setMobileMoney(prev => prev.filter(a => a.id !== id))
-        } else {
+        } else if (type === 'crypto') {
           setCryptoWallets(prev => prev.filter(a => a.id !== id))
+        } else {
+          setPaypalAccounts(prev => prev.filter(a => a.id !== id))
         }
         showToast('success', 'Payment method deleted successfully')
       } else {
@@ -114,7 +126,8 @@ export default function AdminPaymentMethodsClient({
       let endpoint = ''
       if (type === 'bank') endpoint = '/api/admin/payment-methods/bank'
       else if (type === 'mobile_money') endpoint = '/api/admin/payment-methods/mobile-money'
-      else endpoint = '/api/admin/payment-methods/crypto'
+      else if (type === 'crypto') endpoint = '/api/admin/payment-methods/crypto'
+      else endpoint = '/api/admin/payment-methods/paypal'
 
       const response = await fetch(`${endpoint}/${id}`, {
         method: 'PUT',
@@ -127,8 +140,10 @@ export default function AdminPaymentMethodsClient({
           setBankAccounts(prev => prev.map(a => a.id === id ? { ...a, status: !currentStatus } : a))
         } else if (type === 'mobile_money') {
           setMobileMoney(prev => prev.map(a => a.id === id ? { ...a, status: !currentStatus } : a))
-        } else {
+        } else if (type === 'crypto') {
           setCryptoWallets(prev => prev.map(a => a.id === id ? { ...a, status: !currentStatus } : a))
+        } else {
+          setPaypalAccounts(prev => prev.map(a => a.id === id ? { ...a, status: !currentStatus } : a))
         }
         showToast('success', `Payment method ${!currentStatus ? 'activated' : 'deactivated'}`)
       } else {
@@ -146,6 +161,7 @@ export default function AdminPaymentMethodsClient({
       case 'bank': return bankAccounts
       case 'mobile_money': return mobileMoney
       case 'crypto': return cryptoWallets
+      case 'paypal': return paypalAccounts
     }
   }
 
@@ -161,11 +177,16 @@ export default function AdminPaymentMethodsClient({
       return mobile.provider_name.toLowerCase().includes(searchString) ||
         mobile.country.toLowerCase().includes(searchString) ||
         mobile.phone_number.toLowerCase().includes(searchString)
-    } else {
+    } else if (activeTab === 'crypto') {
       const crypto = item as CryptoWallet
       return crypto.currency_name.toLowerCase().includes(searchString) ||
         crypto.currency_symbol.toLowerCase().includes(searchString) ||
         crypto.network.toLowerCase().includes(searchString)
+    } else {
+      const paypal = item as PaypalAccount
+      return paypal.email.toLowerCase().includes(searchString) ||
+        paypal.account_name.toLowerCase().includes(searchString) ||
+        paypal.currency.toLowerCase().includes(searchString)
     }
   })
 
@@ -230,7 +251,7 @@ export default function AdminPaymentMethodsClient({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
         <StatCard
           title="Bank Accounts"
           value={String(bankAccounts.length)}
@@ -254,6 +275,14 @@ export default function AdminPaymentMethodsClient({
           total={cryptoWallets.length}
           icon={Bitcoin}
           color="bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+        />
+        <StatCard
+          title="PayPal"
+          value={String(paypalAccounts.length)}
+          active={paypalAccounts.filter(a => a.status).length}
+          total={paypalAccounts.length}
+          icon={ArrowUpRight}
+          color="bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
         />
       </div>
 
@@ -335,6 +364,15 @@ export default function AdminPaymentMethodsClient({
                       <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Status</th>
                     </>
                   )}
+                  {activeTab === 'paypal' && (
+                    <>
+                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Account Name</th>
+                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Email</th>
+                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Currency</th>
+                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">PayPal.me</th>
+                      <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Status</th>
+                    </>
+                  )}
                   <th className="px-6 py-3 font-medium text-gray-500 dark:text-gray-400 text-right">Actions</th>
                 </tr>
               </thead>
@@ -368,6 +406,20 @@ export default function AdminPaymentMethodsClient({
                         <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{(item as CryptoWallet).network}</td>
                         <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                           {(item as CryptoWallet).min_amount} {(item as CryptoWallet).currency_symbol}
+                        </td>
+                      </>
+                    )}
+                    {activeTab === 'paypal' && (
+                      <>
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{(item as PaypalAccount).account_name}</td>
+                        <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{(item as PaypalAccount).email}</td>
+                        <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{(item as PaypalAccount).currency}</td>
+                        <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                          {(item as PaypalAccount).me_link ? (
+                            <a href={(item as PaypalAccount).me_link} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline text-xs">
+                              paypal.me link
+                            </a>
+                          ) : '—'}
                         </td>
                       </>
                     )}
@@ -485,6 +537,16 @@ export default function AdminPaymentMethodsClient({
                 <CryptoWalletForm
                   initialData={editingItem as CryptoWallet | null}
                   onSuccess={(item: CryptoWallet) => handleSuccess('crypto', item)}
+                  onCancel={() => {
+                    setIsFormOpen(false)
+                    setEditingItem(null)
+                  }}
+                />
+              )}
+              {activeTab === 'paypal' && (
+                <PaypalAccountForm
+                  initialData={editingItem as PaypalAccount | null}
+                  onSuccess={(item: PaypalAccount) => handleSuccess('paypal', item)}
                   onCancel={() => {
                     setIsFormOpen(false)
                     setEditingItem(null)

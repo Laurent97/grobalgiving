@@ -11,10 +11,11 @@ export default async function AdminPaymentMethodsPage() {
   const { profile } = await requireAdmin()
   const supabase = await createClient()
 
-  const [bankAccounts, mobileMoney, cryptoWallets] = await Promise.all([
+  const [bankAccounts, mobileMoney, cryptoWallets, paypalAccounts] = await Promise.all([
     supabase.from('bank_accounts').select('*').order('display_order', { ascending: true }),
     supabase.from('mobile_money_accounts').select('*').order('display_order', { ascending: true }),
-    supabase.from('crypto_wallets').select('*').order('display_order', { ascending: true })
+    supabase.from('crypto_wallets').select('*').order('display_order', { ascending: true }),
+    supabase.from('paypal_accounts').select('*').order('display_order', { ascending: true })
   ])
 
   return (
@@ -23,6 +24,7 @@ export default async function AdminPaymentMethodsPage() {
         bankAccounts={bankAccounts.data || []}
         mobileMoney={mobileMoney.data || []}
         cryptoWallets={cryptoWallets.data || []}
+        paypalAccounts={paypalAccounts.data || []}
       />
     </AdminShell>
   )

@@ -124,12 +124,46 @@ export default function MobileMoneyForm({ initialData, onSuccess, onCancel }: Mo
             aria-label="Network type"
             title="Network type"
           >
-            <option value="Safaricom">Safaricom</option>
-            <option value="Airtel">Airtel</option>
-            <option value="MTN">MTN</option>
-            <option value="Orange">Orange</option>
-            <option value="Vodafone">Vodafone</option>
-            <option value="Other">Other</option>
+            <optgroup label="East Africa">
+              <option value="Safaricom M-Pesa">Safaricom M-Pesa (Kenya)</option>
+              <option value="Airtel Kenya">Airtel Money (Kenya)</option>
+              <option value="MTN MoMo Uganda">MTN MoMo (Uganda)</option>
+              <option value="Airtel Uganda">Airtel Money (Uganda)</option>
+              <option value="MTN MoMo Rwanda">MTN MoMo (Rwanda)</option>
+              <option value="Airtel Rwanda">Airtel Money (Rwanda)</option>
+              <option value="M-Pesa Tanzania">M-Pesa (Tanzania)</option>
+              <option value="Airtel Tanzania">Airtel Money (Tanzania)</option>
+              <option value="Tigo Tanzania">Tigo Pesa (Tanzania)</option>
+              <option value="Halotel Tanzania">Halopesa (Tanzania)</option>
+              <option value="Telebirr Ethiopia">Telebirr (Ethiopia)</option>
+              <option value="CBE Birr">CBE Birr (Ethiopia)</option>
+            </optgroup>
+            <optgroup label="West Africa">
+              <option value="MTN MoMo Ghana">MTN MoMo (Ghana)</option>
+              <option value="Vodafone Cash Ghana">Vodafone Cash (Ghana)</option>
+              <option value="AirtelTigo Ghana">AirtelTigo Money (Ghana)</option>
+              <option value="MTN MoMo Nigeria">MTN MoMo (Nigeria)</option>
+              <option value="Airtel Nigeria">Airtel Money (Nigeria)</option>
+              <option value="Opay Nigeria">OPay (Nigeria)</option>
+              <option value="Wave Senegal">Wave (Senegal/Côte d'Ivoire)</option>
+              <option value="Orange Money Senegal">Orange Money (Senegal)</option>
+              <option value="MTN MoMo Cameroon">MTN MoMo (Cameroon)</option>
+              <option value="Orange Money Cameroon">Orange Money (Cameroon)</option>
+            </optgroup>
+            <optgroup label="Southern Africa">
+              <option value="Vodacom M-Pesa SA">Vodacom M-Pesa (South Africa)</option>
+              <option value="MTN MoMo SA">MTN MoMo (South Africa)</option>
+              <option value="EcoCash Zimbabwe">EcoCash (Zimbabwe)</option>
+              <option value="Mpamba Malawi">Mpamba (Malawi)</option>
+              <option value="Airtel Money Zambia">Airtel Money (Zambia)</option>
+              <option value="MTN MoMo Zambia">MTN MoMo (Zambia)</option>
+            </optgroup>
+            <optgroup label="Other / Global">
+              <option value="Orange Money">Orange Money</option>
+              <option value="Airtel Money">Airtel Money</option>
+              <option value="MTN MoMo">MTN MoMo</option>
+              <option value="Other">Other</option>
+            </optgroup>
           </select>
         </div>
         <div>
@@ -142,13 +176,65 @@ export default function MobileMoneyForm({ initialData, onSuccess, onCancel }: Mo
             aria-label="Currency"
             title="Currency"
           >
-            <option value="KES">KES</option>
-            <option value="UGX">UGX</option>
-            <option value="GHS">GHS</option>
-            <option value="NGN">NGN</option>
-            <option value="TZS">TZS</option>
-            <option value="ZAR">ZAR</option>
-            <option value="USD">USD</option>
+            <optgroup label="East Africa">
+              <option value="KES">KES — Kenyan Shilling</option>
+              <option value="UGX">UGX — Ugandan Shilling</option>
+              <option value="RWF">RWF — Rwandan Franc</option>
+              <option value="TZS">TZS — Tanzanian Shilling</option>
+              <option value="ETB">ETB — Ethiopian Birr</option>
+              <option value="BIF">BIF — Burundian Franc</option>
+              <option value="DJF">DJF — Djiboutian Franc</option>
+              <option value="ERN">ERN — Eritrean Nakfa</option>
+              <option value="SOS">SOS — Somali Shilling</option>
+              <option value="SSP">SSP — South Sudanese Pound</option>
+            </optgroup>
+            <optgroup label="West Africa">
+              <option value="GHS">GHS — Ghanaian Cedi</option>
+              <option value="NGN">NGN — Nigerian Naira</option>
+              <option value="XOF">XOF — West African CFA Franc</option>
+              <option value="SLL">SLL — Sierra Leonean Leone</option>
+              <option value="GMD">GMD — Gambian Dalasi</option>
+              <option value="LRD">LRD — Liberian Dollar</option>
+              <option value="GNF">GNF — Guinean Franc</option>
+            </optgroup>
+            <optgroup label="Central Africa">
+              <option value="XAF">XAF — Central African CFA Franc</option>
+              <option value="CDF">CDF — Congolese Franc</option>
+              <option value="AOA">AOA — Angolan Kwanza</option>
+            </optgroup>
+            <optgroup label="Southern Africa">
+              <option value="ZAR">ZAR — South African Rand</option>
+              <option value="ZWL">ZWL — Zimbabwean Dollar</option>
+              <option value="MWK">MWK — Malawian Kwacha</option>
+              <option value="ZMW">ZMW — Zambian Kwacha</option>
+              <option value="MZN">MZN — Mozambican Metical</option>
+              <option value="BWP">BWP — Botswana Pula</option>
+              <option value="NAD">NAD — Namibian Dollar</option>
+              <option value="LSL">LSL — Lesotho Loti</option>
+              <option value="SZL">SZL — Swazi Lilangeni</option>
+              <option value="MGA">MGA — Malagasy Ariary</option>
+            </optgroup>
+            <optgroup label="North Africa">
+              <option value="EGP">EGP — Egyptian Pound</option>
+              <option value="DZD">DZD — Algerian Dinar</option>
+              <option value="MAD">MAD — Moroccan Dirham</option>
+              <option value="TND">TND — Tunisian Dinar</option>
+              <option value="LYD">LYD — Libyan Dinar</option>
+              <option value="SDG">SDG — Sudanese Pound</option>
+            </optgroup>
+            <optgroup label="Global">
+              <option value="USD">USD — US Dollar</option>
+              <option value="EUR">EUR — Euro</option>
+              <option value="GBP">GBP — British Pound</option>
+              <option value="CAD">CAD — Canadian Dollar</option>
+              <option value="AUD">AUD — Australian Dollar</option>
+              <option value="CHF">CHF — Swiss Franc</option>
+              <option value="JPY">JPY — Japanese Yen</option>
+              <option value="CNY">CNY — Chinese Yuan</option>
+              <option value="INR">INR — Indian Rupee</option>
+              <option value="SAR">SAR — Saudi Riyal</option>
+              <option value="AED">AED — UAE Dirham</option>
+            </optgroup>
           </select>
         </div>
       </div>
