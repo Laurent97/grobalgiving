@@ -28,23 +28,28 @@ export default async function AdminDonationsPage() {
   // joins may return null for related rows filtered by their own RLS.
   const client = admin ?? await createClient()
 
-  // Try join with project+nonprofit; fall back to simpler join if that fails
-  const FULL_SELECT = `*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url, email)`
-  const SIMPLE_SELECT = `*, project:projects(id, title, slug), donor:profiles(id, full_name, avatar_url, email)`
+  // Progressive fallback selects — use the first one that succeeds.
+  // This handles any state of the production schema (partially migrated, etc.)
+  const SELECTS = [
+    `*, project:projects(id, title, slug, nonprofit:nonprofits(id, name)), donor:profiles(id, full_name, avatar_url, email)`,
+    `*, project:projects(id, title, slug), donor:profiles(id, full_name, avatar_url, email)`,
+    `*, project:projects(id, title, slug), donor:profiles(id, full_name)`,
+    `id, donor_id, project_id, amount, currency, status, payment_method_type, payment_method_id, transaction_reference, receipt_url, admin_notes, verified_at, dedication_type, dedication_name, donor_comment, created_at`,
+    `id, donor_id, project_id, amount, currency, status, created_at`,
+  ]
 
   async function queryDonations(filter?: Record<string, any>) {
-    let q = client.from('donations').select(FULL_SELECT).order('created_at', { ascending: false })
-    if (filter?.in) q = (q as any).in('project_id', filter.in)
-    const { data, error } = await q
-    if (error) {
-      console.error('[donations page] full join error:', error.message, '— retrying with simple join')
-      let q2 = client.from('donations').select(SIMPLE_SELECT).order('created_at', { ascending: false })
-      if (filter?.in) q2 = (q2 as any).in('project_id', filter.in)
-      const { data: data2, error: err2 } = await q2
-      if (err2) console.error('[donations page] simple join error:', err2.message)
-      return data2 ?? []
+    for (const sel of SELECTS) {
+      let q = client.from('donations').select(sel).order('created_at', { ascending: false })
+      if (filter?.in) q = (q as any).in('project_id', filter.in)
+      const { data, error } = await q
+      if (!error && data) {
+        console.log('[donations page] select succeeded:', sel.slice(0, 60))
+        return data
+      }
+      console.error('[donations page] select failed, trying simpler:', error?.message)
     }
-    return data ?? []
+    return []
   }
 
   if (isNonprofitAdmin) {
