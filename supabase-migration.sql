@@ -399,3 +399,187 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS project_details JSONB DEFAULT '{}'
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS terms_accepted BOOLEAN DEFAULT false;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS donor_count INT DEFAULT 0;
+
+-- Helper function to increment donor count on a project
+CREATE OR REPLACE FUNCTION increment_project_donor_count(project_id UUID)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE projects SET donor_count = COALESCE(donor_count, 0) + 1 WHERE id = project_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Missing columns on donations table
+-- ─────────────────────────────────────────────────────────────────────────────
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS payment_method_type TEXT;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS payment_method_id   TEXT;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS transaction_reference TEXT UNIQUE;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS receipt_url         TEXT;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS admin_notes         TEXT;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS verified_by         UUID REFERENCES profiles(id);
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS verified_at         TIMESTAMPTZ;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS dedication_type     TEXT;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS dedication_name     TEXT;
+ALTER TABLE donations ADD COLUMN IF NOT EXISTS donor_comment       TEXT;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Donation cart table (for multi-item checkout flow)
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS donation_cart (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  session_id   TEXT,
+  project_id   UUID REFERENCES projects(id) ON DELETE CASCADE,
+  amount       NUMERIC NOT NULL,
+  currency     TEXT DEFAULT 'USD',
+  dedication_type TEXT,
+  dedication_name TEXT,
+  comment      TEXT,
+  created_at   TIMESTAMPTZ DEFAULT now(),
+  updated_at   TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE donation_cart ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Users manage own cart' AND polrelid = 'donation_cart'::regclass) THEN
+    CREATE POLICY "Users manage own cart" ON donation_cart FOR ALL USING (auth.uid() = user_id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Guest cart by session' AND polrelid = 'donation_cart'::regclass) THEN
+    CREATE POLICY "Guest cart by session" ON donation_cart FOR ALL USING (user_id IS NULL);
+  END IF;
+END$$;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Payment audit log (tracks verify/reject actions)
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS payment_audit_log (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  action       TEXT NOT NULL,
+  entity_type  TEXT NOT NULL,
+  entity_id    UUID,
+  changes      JSONB,
+  performed_by UUID REFERENCES profiles(id),
+  ip_address   TEXT,
+  user_agent   TEXT,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE payment_audit_log ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Admins view payment audit log' AND polrelid = 'payment_audit_log'::regclass) THEN
+    CREATE POLICY "Admins view payment audit log" ON payment_audit_log FOR SELECT USING (
+      EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+  END IF;
+END$$;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Additional RLS policies for donations
+-- ─────────────────────────────────────────────────────────────────────────────
+DO $$
+BEGIN
+  -- Donors can insert their own donations
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Donors insert own donations' AND polrelid = 'donations'::regclass) THEN
+    CREATE POLICY "Donors insert own donations" ON donations FOR INSERT WITH CHECK (
+      auth.uid() = donor_id OR donor_id IS NULL
+    );
+  END IF;
+  -- Admins can update any donation (verify/reject)
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Admins update donations' AND polrelid = 'donations'::regclass) THEN
+    CREATE POLICY "Admins update donations" ON donations FOR UPDATE USING (
+      EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+  END IF;
+END$$;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Payment methods tables (bank, mobile money, crypto)
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS bank_accounts (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_name    TEXT NOT NULL,
+  bank_name       TEXT NOT NULL,
+  account_number  TEXT NOT NULL,
+  routing_number  TEXT,
+  swift_bic       TEXT,
+  account_type    TEXT DEFAULT 'international',
+  currency        TEXT DEFAULT 'USD',
+  country         TEXT,
+  branch_address  TEXT,
+  instructions    TEXT,
+  bank_logo_url   TEXT,
+  status          BOOLEAN DEFAULT true,
+  display_order   INT DEFAULT 0,
+  created_by      UUID REFERENCES profiles(id),
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS mobile_money_accounts (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  provider_name   TEXT NOT NULL,
+  country         TEXT NOT NULL,
+  phone_number    TEXT NOT NULL,
+  account_name    TEXT NOT NULL,
+  network_type    TEXT,
+  currency        TEXT DEFAULT 'USD',
+  fee_structure   TEXT DEFAULT 'sender',
+  instructions    TEXT,
+  status          BOOLEAN DEFAULT true,
+  display_order   INT DEFAULT 0,
+  created_by      UUID REFERENCES profiles(id),
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS crypto_wallets (
+  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  currency_name        TEXT NOT NULL,
+  currency_symbol      TEXT NOT NULL,
+  wallet_address       TEXT NOT NULL,
+  network              TEXT,
+  qr_code_url          TEXT,
+  min_amount           NUMERIC DEFAULT 0,
+  exchange_rate_source TEXT,
+  status               BOOLEAN DEFAULT true,
+  display_order        INT DEFAULT 0,
+  created_by           UUID REFERENCES profiles(id),
+  created_at           TIMESTAMPTZ DEFAULT now(),
+  updated_at           TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE bank_accounts       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mobile_money_accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE crypto_wallets      ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Anyone view active bank accounts' AND polrelid = 'bank_accounts'::regclass) THEN
+    CREATE POLICY "Anyone view active bank accounts" ON bank_accounts FOR SELECT USING (status = true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Admins manage bank accounts' AND polrelid = 'bank_accounts'::regclass) THEN
+    CREATE POLICY "Admins manage bank accounts" ON bank_accounts FOR ALL USING (
+      EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Anyone view active mobile money' AND polrelid = 'mobile_money_accounts'::regclass) THEN
+    CREATE POLICY "Anyone view active mobile money" ON mobile_money_accounts FOR SELECT USING (status = true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Admins manage mobile money' AND polrelid = 'mobile_money_accounts'::regclass) THEN
+    CREATE POLICY "Admins manage mobile money" ON mobile_money_accounts FOR ALL USING (
+      EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Anyone view active crypto wallets' AND polrelid = 'crypto_wallets'::regclass) THEN
+    CREATE POLICY "Anyone view active crypto wallets" ON crypto_wallets FOR SELECT USING (status = true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policy WHERE polname = 'Admins manage crypto wallets' AND polrelid = 'crypto_wallets'::regclass) THEN
+    CREATE POLICY "Admins manage crypto wallets" ON crypto_wallets FOR ALL USING (
+      EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+  END IF;
+END$$;

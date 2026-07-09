@@ -48,11 +48,15 @@ export async function PUT(
       return NextResponse.json({ error: updateError.message }, { status: 500 })
     }
 
-    // Update project raised amount
+    // Update project raised amount and increment donor_count
     await admin.rpc('increment_project_amount', {
       project_id: donation.project_id,
       amount: donation.amount
     })
+
+    if (donation.donor_id) {
+      await admin.rpc('increment_project_donor_count', { project_id: donation.project_id })
+    }
 
     // Log audit
     await admin.from('payment_audit_log').insert({

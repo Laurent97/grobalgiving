@@ -11,37 +11,51 @@ export default async function AdminDonationsPage() {
   unstable_noStore()
   const { profile } = await requireNonprofitAdmin()
 
-  let query
   let missingServiceKey = false
-
   const admin = createAdminClient()
+
+  // Build the select – for nonprofit admins, use an inner join so PostgREST
+  // filters on the related table; for full admins just fetch everything.
+  const isNonprofitAdmin = profile.role === 'nonprofit_admin' && !!profile.nonprofit_id
+
+  let donations: any[] | null = null
+
   if (admin) {
-    query = admin
-      .from('donations')
-      .select(`
-        *,
-        project:projects(*, nonprofit:nonprofits(*)),
-        donor:profiles(*)
-      `)
-      .order('created_at', { ascending: false })
+    if (isNonprofitAdmin) {
+      // Filter via the projects table using a subquery on project_id
+      const { data: projectIds } = await admin
+        .from('projects')
+        .select('id')
+        .eq('nonprofit_id', profile.nonprofit_id!)
+
+      const ids = (projectIds || []).map((p: any) => p.id)
+
+      const { data } = await admin
+        .from('donations')
+        .select(`*, project:projects(*, nonprofit:nonprofits(*)), donor:profiles(*)`)
+        .in('project_id', ids.length > 0 ? ids : ['00000000-0000-0000-0000-000000000000'])
+        .order('created_at', { ascending: false })
+
+      donations = data
+    } else {
+      const { data } = await admin
+        .from('donations')
+        .select(`*, project:projects(*, nonprofit:nonprofits(*)), donor:profiles(*)`)
+        .order('created_at', { ascending: false })
+
+      donations = data
+    }
   } else {
     missingServiceKey = true
     const supabase = await createClient()
-    query = supabase
+
+    const { data } = await supabase
       .from('donations')
-      .select(`
-        *,
-        project:projects(*, nonprofit:nonprofits(*)),
-        donor:profiles(*)
-      `)
+      .select(`*, project:projects(*, nonprofit:nonprofits(*)), donor:profiles(*)`)
       .order('created_at', { ascending: false })
-  }
 
-  if (profile.role === 'nonprofit_admin' && profile.nonprofit_id) {
-    query = query.eq('project.nonprofit_id', profile.nonprofit_id)
+    donations = data
   }
-
-  const { data: donations } = await query
 
   return (
     <AdminShell role={profile.role}>
